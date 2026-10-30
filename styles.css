@@ -1,0 +1,492 @@
+/* =====================================================================
+   FONT — Mier A (General Type Studio). Font ini BERLISENSI/komersial.
+   Taruh file milik Anda (hasil beli/lisensi) di folder /fonts dengan nama di bawah.
+   Kalau file belum ada, otomatis memakai Figtree (gratis, bentuk paling dekat).
+   ===================================================================== */
+@font-face { font-family: "Mier A"; font-weight: 400; font-style: normal; font-display: swap;
+  src: local("Mier A Regular"), local("MierA-Regular"), url("fonts/MierA-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Mier A"; font-weight: 600; font-style: normal; font-display: swap;
+  src: local("Mier A Demi"), local("MierA-Demi"), url("fonts/MierA-Demi.woff2") format("woff2"); }
+@font-face { font-family: "Mier A"; font-weight: 800; font-style: normal; font-display: swap;
+  src: local("Mier A ExtraBold"), local("MierA-ExtraBold"), url("fonts/MierA-ExtraBold.woff2") format("woff2"); }
+@font-face { font-family: "Mier A"; font-weight: 900; font-style: normal; font-display: swap;
+  src: local("Mier A Black"), local("MierA-Black"), url("fonts/MierA-Black.woff2") format("woff2"); }
+
+:root {
+  --ink: #202020;
+  --paper: #f0f0f0;
+  --white: #f5f5f3;
+  --accent: #ec483c;
+  --gutter: 6vw;
+  --ease: cubic-bezier(.76, 0, .24, 1);
+  --display: "Mier A", "Figtree", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --body: "Mier A", "Figtree", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* penyetel judul proyek: kalau pakai Mier A asli, coba --title-sx: 1.12 dan --title-ls: -.06em */
+  --title-sx: 1.23;
+  --title-ls: -.082em;
+  --work-shift: 0vh;
+  --work-enter: 100vh;
+  --wl-y: -16vh;
+  --about-word-y: 72vh;
+  --about-copy-y: 0vh;
+  --contact-y: 110vh;
+  --strike-1: 0;
+  --strike-2: 0;
+  --rule: 0;
+  --marq: 0;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; min-width: 320px; background: var(--ink); }
+html { scroll-behavior: auto; }
+
+body {
+  color: var(--ink);
+  font-family: var(--body);
+  font-weight: 600;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+::selection { color: var(--paper); background: var(--accent); }
+a { color: inherit; }
+main { width: 100%; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ================= CURSOR: titik + RING TIPIS ================= */
+.cursor-dot, .cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 10000;
+  border-radius: 50%; pointer-events: none; opacity: 0;
+  mix-blend-mode: difference; will-change: transform, opacity;
+}
+.cursor-dot  { width: 15px;  height: 15px;  margin: -9px 0 0 -10px;   background: #fff; }
+.cursor-ring { width: 40px; height: 40px; margin: -22px 0 0 -22px; border: 1px solid #fff; background: transparent; }
+
+body.has-custom-cursor, body.has-custom-cursor * { cursor: none !important; }
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
+/* ================= OPENING ================= */
+.opening-track { position: relative; height: 1100vh; background: var(--paper); }
+
+.opening-stage {
+  position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 460px;
+  overflow: hidden; isolation: isolate; background: var(--ink);
+}
+
+.layer { position: absolute; inset: 0; pointer-events: none; }
+.layer-base  { z-index: 0; background: var(--ink); }
+.layer-paper { z-index: 1; background: var(--paper); clip-path: inset(0 0 0 100%); will-change: clip-path; }
+.layer-night { z-index: 2; background: var(--ink);   clip-path: inset(0 0 0 100%); will-change: clip-path; }
+.layer-rise  { z-index: 3; background: var(--paper); clip-path: inset(100% 0 0 0); will-change: clip-path; }
+
+.word {
+  position: absolute; top: 50%; left: 0; margin: 0;
+  font-family: var(--display); font-weight: 800; line-height: 1;
+  font-size: 50vh; letter-spacing: -.04em; white-space: nowrap;
+  opacity: 0; transform: translate3d(0, -50%, 0);
+  user-select: none; will-change: transform;
+}
+body.is-ready .word { opacity: 1; }
+.word-light { color: var(--paper); }
+.word-ink   { color: var(--ink); }
+/* WICAKSONO: outline tipis (tanpa isi), terlihat hanya saat menimpa huruf gelap RAIHAN */
+.word-b     { color: transparent; -webkit-text-stroke: 3px var(--paper); visibility: hidden; }
+
+/* kata besar yang meluncur dari SAMPING (horizontal) */
+.vword {
+  position: absolute; top: 0; left: 0; margin: 0; color: var(--paper);
+  font-family: var(--display); font-weight: 800; line-height: 1;
+  font-size: min(30vh, 40vw); letter-spacing: -.03em; white-space: nowrap;
+  transform: translate3d(110vw, 0, 0);
+  user-select: none; will-change: transform;
+}
+/* DYNAMIQUE: outline tipis, hanya huruf depan "D" yang merah */
+.vword-b { letter-spacing: -.005em; }
+.vword-b .dy-first { color: var(--accent); }
+.vword-b .dy-rest  { color: transparent; -webkit-text-stroke: 2px var(--paper); }
+
+/* teks kecil di bawah kata besar (ikut bergerak bersama kata) */
+.vcap {
+  position: absolute; top: calc(100% - var(--vfs, 100px) * .06);
+  display: block; font-family: var(--body);
+  font-size: clamp(11px, 1.15vw, 22px); font-weight: 600; line-height: 1.2; letter-spacing: -.01em;
+  white-space: nowrap; color: var(--paper);
+}
+.vword-a .vcap { left: calc(var(--vfs, 100px) * .05); }
+.vword-b .vcap { right: calc(var(--vfs, 100px) * .05); text-align: right; }
+
+/* "scroll": hanya huruf S yang merah; muncul bersama garis merah setelah loading selesai */
+.scroll-label {
+  position: absolute; z-index: 6; bottom: 2.2vh; left: 50%;
+  color: var(--white); font-size: 19px; font-weight: 800; line-height: 1;
+  letter-spacing: -.045em; transform: translateX(-50%); pointer-events: none;
+}
+.scroll-label span { display: inline-block; opacity: 0; transform: translateY(10px); transition: opacity .7s ease .15s, transform .8s cubic-bezier(.22, 1, .36, 1) .15s; }
+html.is-loaded .scroll-label span { opacity: 1; transform: none; }
+
+/* garis merah HORIZONTAL: di BELAKANG huruf R sampai lubang, lalu ujungnya muncul DI DEPAN R (kesan masuk lubang) */
+.edge-line, .edge-front {
+  position: absolute; top: 0; left: 0; width: 0; height: 4px; background: var(--accent);
+  transform: translate3d(100vw, 50vh, 0); will-change: transform, width; visibility: hidden;
+}
+.edge-front { z-index: 0; }
+
+/* label kecil gaya poster */
+.sec-label {
+  position: absolute; z-index: 5; pointer-events: none;
+  font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; line-height: 1;
+}
+
+/* "Selected work": ada di dalam bar kertas yang menempel (sticky) di atas section Work */
+.sec-label-work {
+  top: 3.2vh; left: var(--gutter); color: var(--ink);
+  opacity: var(--wl-o, 0); translate: 0 var(--wl-y, -9vh); will-change: translate, opacity;
+}
+
+/* ================= WORK =================
+   Tulisan berada di aliran halaman biasa (ikut scroll). Gambar "menempel" (sticky) di layar
+   dan baru tenggelam saat tirai gelap About naik menutupinya. */
+/* Work = kertas yang menggeser MENUTUPI Opening (tanpa ruang kosong), tepi atasnya sedikit miring */
+.work-track {
+  position: relative; z-index: 1; margin-top: -100vh; margin-top: -100svh;
+  background: var(--paper); color: var(--ink);
+  clip-path: polygon(0 0, 100% 3.5vh, 100% 100%, 0 100%);
+}
+.work-stage { position: relative; isolation: isolate; }
+
+/* bar kertas yang menempel di atas: baris yang naik memudar di bawahnya sebelum menyentuh label */
+.work-bar {
+  position: sticky; top: 0; z-index: 3; height: 13vh; margin-bottom: -13vh; overflow: hidden; pointer-events: none;
+  background: linear-gradient(to bottom, var(--paper) 0, var(--paper) 62%, rgba(240, 240, 240, 0) 100%);
+}
+
+.preview-col { position: absolute; top: 104vh; bottom: 0; right: 5.8%; width: 38%; pointer-events: none; translate: 0 var(--pv-enter, 0vh); }
+.project-preview { position: sticky; top: 14vh; width: 100%; height: 74vh; overflow: hidden; background: var(--paper); pointer-events: auto; }
+
+.preview-default {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  color: var(--ink); font-family: var(--display); font-weight: 800; line-height: 1;
+  font-size: min(63vh, 36vw); user-select: none;
+  transition: opacity .6s cubic-bezier(.22, 1, .36, 1), transform .8s cubic-bezier(.22, 1, .36, 1);
+}
+.preview-default::before { content: attr(data-letter); display: block; transform: translateY(-.02em); }
+.project-preview.has-active .preview-default { opacity: 0; transform: scale(.96); }
+
+/* gambar: fade halus + MENGAMBANG pelan seperti di atas air */
+.project-art {
+  position: absolute; inset: -2%; display: block; width: 104%; height: 104%;
+  object-fit: var(--art-fit, cover); object-position: var(--art-position, center);
+  transform: translate(var(--art-x, 0%), var(--art-y, 0%)) scale(var(--art-scale, 1));
+  transform-origin: center center; opacity: 0; pointer-events: none;
+  transition: opacity .8s cubic-bezier(.4, 0, .2, 1);
+  animation: artFloat 12s ease-in-out infinite;
+  will-change: opacity, translate, rotate, scale;
+}
+.project-art[data-art="0"] { animation-duration: 13s; animation-delay: -2s; }
+.project-art[data-art="1"] { animation-duration: 11s; animation-delay: -5s; }
+.project-art[data-art="2"] { animation-duration: 14s; animation-delay: -8s; }
+.project-art[data-art="3"] { animation-duration: 12.5s; animation-delay: -4s; }
+.project-art[data-art="4"] { animation-duration: 15s; animation-delay: -1s; }
+.project-art.is-visible { opacity: 1; }
+
+@keyframes artFloat {
+  0%   { translate: 0 0;        rotate: 0deg;     scale: 1; }
+  25%  { translate: .6% -.9%;   rotate: .35deg;   scale: 1.012; }
+  50%  { translate: -.5% .5%;   rotate: -.25deg;  scale: 1.006; }
+  75%  { translate: -.7% -.6%;  rotate: .3deg;    scale: 1.016; }
+  100% { translate: 0 0;        rotate: 0deg;     scale: 1; }
+}
+
+.project-list { position: relative; width: 57%; padding: 104vh 0 150vh; counter-reset: row; }
+.project-row { counter-increment: row; position: relative; display: block; width: max-content; max-width: 50vw; margin: 0 0 13.5vh var(--gutter); color: var(--ink); text-decoration: none; outline: none; transform: translate3d(0, 0, 0); translate: 0 var(--row-enter, 0vh); transition: transform .28s var(--ease); }
+.project-row:hover, .project-row:focus-visible { transform: translate3d(7px, 0, 0); }
+
+/* nomor kecil merah di atas tiap judul */
+.project-row::before {
+  content: "(" counter(row, decimal-leading-zero) ")";
+  position: absolute; left: 0; top: -1.5em; font-size: 11px; font-weight: 800; letter-spacing: .1em; line-height: 1;
+  color: var(--accent); transition: transform .35s var(--ease);
+}
+.project-row:hover::before, .project-row.is-active::before { transform: translateX(6px); }
+
+.project-title { display: flex; align-items: baseline; gap: .085em; font-family: var(--display); font-size: clamp(42px, 4.35vw, 84px); font-weight: 800; line-height: .92; letter-spacing: var(--title-ls); white-space: nowrap; transform: scaleX(var(--title-sx)); transform-origin: left center; }
+.title-filled { color: var(--ink); }
+.title-outline { color: transparent; -webkit-text-stroke: 1.1px var(--ink); text-stroke: 1.1px var(--ink); transition: color .25s ease, -webkit-text-stroke-color .25s ease; }
+.project-row:hover .title-outline, .project-row:focus-visible .title-outline { color: var(--accent); -webkit-text-stroke: 0 transparent; text-stroke: 0 transparent; }
+
+.project-meta { display: block; max-width: 47vw; margin-top: 8px; overflow: hidden; color: #777; font-size: clamp(10px, .72vw, 14px); font-weight: 600; line-height: 1.12; letter-spacing: -.01em; white-space: nowrap; text-overflow: clip; opacity: 0; transform: translateY(-3px); transition: opacity .35s ease, transform .4s var(--ease); }
+.project-meta strong, .project-meta b { color: var(--ink); font-weight: 800; }
+.project-row.is-hover .project-meta { opacity: 1; transform: translateY(0); }
+@media (min-width: 1600px) { .project-title { font-size: clamp(70px, 4.08vw, 84px); } .project-meta { font-size: 14px; } }
+
+/* ================= ABOUT + CONTACT (satu panggung sticky) ================= */
+/* About = "tirai" gelap yang naik MENUTUPI Work (Work & gambar tetap terpaku, tenggelam di balik tepi gelap miring) */
+.about-track {
+  position: relative; z-index: 2; height: 460vh; margin-top: -100vh; margin-top: -100svh;
+  background: var(--ink); color: var(--white);
+  clip-path: polygon(0 4.5vh, 100% 0, 100% 100%, 0 100%);
+}
+.about-stage { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 540px; overflow: hidden; background: var(--ink); isolation: isolate; }
+.sec-label-about { left: 39.7%; top: 3.2vh; color: var(--white); z-index: 6; }
+
+/* tulisan raksasa tipis di latar */
+.about-marquee { position: absolute; z-index: 1; top: 8vh; left: 0; width: 100%; overflow: hidden; pointer-events: none; }
+.about-marquee-track {
+  display: flex; width: max-content; white-space: nowrap; align-items: center;
+  font-family: var(--display); font-weight: 900; font-size: clamp(70px, 13vw, 260px); line-height: 1; letter-spacing: -.05em;
+  color: transparent; -webkit-text-stroke: 1.2px rgba(245, 245, 243, .17);
+  transform: translate3d(calc(var(--marq, 0) * -1vw), 0, 0); will-change: transform;
+}
+.about-marquee-track span { padding-right: .3em; }
+.about-marquee-track i { font-style: normal; font-size: .38em; color: var(--accent); -webkit-text-stroke: 0; opacity: .75; padding-right: .75em; }
+
+.sideword-wrap { position: absolute; z-index: 3; top: 0; left: 2.6vw; width: 30vw; height: 100%; pointer-events: none; }
+.sideword {
+  position: absolute; top: 0; left: 0; display: block; color: var(--white);
+  font-size: clamp(220px, 28vw, 560px); font-weight: 900; line-height: .76; letter-spacing: -.07em;
+  white-space: nowrap; transform-origin: left top; user-select: none; will-change: transform;
+  transform: translate3d(0, var(--about-word-y), 0) rotate(-90deg);
+}
+
+/* teks about memudar halus saat naik mendekati tepi atas (tidak menabrak label/marquee) */
+.about-copy-clip {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 7vh, #000 16vh, #000 86vh, transparent 98vh);
+          mask-image: linear-gradient(to bottom, transparent 0, transparent 7vh, #000 16vh, #000 86vh, transparent 98vh);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+}
+.about-copy {
+  position: absolute; top: 56%; right: 7%; left: 38.5%; color: var(--white);
+  font-size: clamp(22px, 2.3vw, 46px); font-weight: 600; line-height: 1.36; letter-spacing: -.035em;
+  transform: translate3d(0, var(--about-copy-y), 0); will-change: transform; pointer-events: auto;
+}
+/* paragraf rapat (jarak ±1 baris) dan masuk bergantian saat discroll */
+.about-copy p { margin: 0 0 1.15em; translate: 0 var(--ps, 0vh); }
+.about-copy .about-intro { font-weight: 700; }
+
+.about-copy s.strike {
+  text-decoration: none;
+  background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 56% / 0% 2px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.about-copy s.strike-1 { background-size: calc(var(--strike-1) * 100%) 2px; }
+.about-copy s.strike-2 { background-size: calc(var(--strike-2) * 100%) 2px; }
+
+.contact-content {
+  position: absolute; z-index: 2; top: 37.3%; right: 5.8%; left: 39.8%; color: var(--white);
+  transform: translate3d(0, var(--contact-y), 0); will-change: transform;
+}
+.contact-heading, .contact-email { display: block; font-size: clamp(22px, 1.65vw, 33px); font-weight: 800; line-height: 1.4; letter-spacing: -.035em; text-decoration: none; }
+.contact-email { width: fit-content; }
+.contact-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .2em 1em; }
+/* garis di tengah-tengah antara "Let's Talk" dan email */
+.contact-rule { width: 100%; height: 2px; margin: .3em 0 .38em; background: var(--accent); transform-origin: left center; transform: scaleX(var(--rule)); }
+.social-links { display: flex; justify-content: flex-end; gap: 1em; margin-top: 0; font-size: clamp(20px, 1.65vw, 33px); font-weight: 800; letter-spacing: -.04em; }
+.social-links a, .contact-email { text-decoration: none; display: inline-block; transition: color .2s ease, opacity .2s ease; }
+.social-links a:hover, .contact-email:hover { color: var(--accent); }
+
+.site-footer {
+  position: absolute; z-index: 2; right: 5.8%; bottom: 1.65vh; left: 39.8%;
+  display: flex; align-items: center; justify-content: space-between; gap: 22px;
+  color: rgba(245, 245, 243, .94); font-size: clamp(9px, .69vw, 13px); line-height: 1.25; letter-spacing: -.018em;
+  transform: translate3d(0, var(--contact-y), 0);
+}
+
+/* ================= SCROLLBAR MINIMALIS ================= */
+html { scrollbar-width: none; -ms-overflow-style: none; }
+::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.scrollbar {
+  position: fixed; top: 0; right: 0; z-index: 9500; width: 20px; height: 100vh; height: 100dvh;
+  mix-blend-mode: difference; touch-action: none; cursor: pointer;
+  transition: opacity .4s ease;
+}
+.scrollbar::before { content: ""; position: absolute; top: 0; bottom: 0; right: 7px; width: 1px; background: #fff; opacity: .22; }
+.scrollbar-thumb {
+  position: absolute; top: 0; right: 6px; width: 3px; height: 60px; border-radius: 3px; background: #fff;
+  will-change: transform; transition: width .2s ease, right .2s ease;
+}
+.scrollbar:hover .scrollbar-thumb, .scrollbar.is-drag .scrollbar-thumb { width: 5px; right: 5px; }
+.scrollbar.is-hidden { opacity: 0; pointer-events: none; }
+html.is-loading .scrollbar { opacity: 0; pointer-events: none; }
+@media (hover: none), (pointer: coarse) { .scrollbar { pointer-events: none; width: 10px; } .scrollbar::before { right: 3px; } .scrollbar-thumb { right: 2px; } }
+
+/* ================= LOADING SCREEN ================= */
+html.is-loading, html.is-loading body { overflow: hidden; height: 100%; }
+.loader {
+  position: fixed; inset: 0; z-index: 9000; background: var(--ink); overflow: hidden;
+  transition: opacity .6s ease, visibility .6s ease;
+}
+.loader.is-done { opacity: 0; visibility: hidden; }
+.loader-letter {
+  position: absolute; top: 50%; left: 0; margin: 0;
+  font-family: var(--display); font-weight: 800; line-height: 1;
+  font-size: 50vh; letter-spacing: -.04em; white-space: nowrap;
+  transform: translate3d(0, -50%, 0); user-select: none;
+}
+.loader-outline { color: transparent; -webkit-text-stroke: 2px rgba(240, 240, 240, .85); }
+.loader-fill { color: var(--paper); clip-path: inset(100% 0 0 0); will-change: clip-path; }
+
+/* petunjuk kecil: web baru "dimulai" setelah klik / sentuhan pertama */
+.loader-hint {
+  position: absolute; left: 50%; bottom: 3vh; transform: translateX(-50%); white-space: nowrap;
+  font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(240, 240, 240, .72); transition: opacity .5s ease;
+  animation: hintPulse 2.4s ease-in-out infinite;
+}
+.loader.is-started .loader-hint { opacity: 0; animation: none; }
+@keyframes hintPulse { 0%, 100% { opacity: .35; } 50% { opacity: .9; } }
+
+
+/* ================= HOVER: huruf judul melompat bergelombang ================= */
+.project-title .ch { display: inline-block; }
+.project-row:hover .project-title .ch,
+.project-row:focus-visible .project-title .ch {
+  animation: letterHop .6s cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--i) * 26ms);
+}
+@keyframes letterHop {
+  0%   { transform: translateY(0); }
+  35%  { transform: translateY(-.12em); }
+  100% { transform: translateY(0); }
+}
+
+.project-preview { border: 0; outline: 0; box-shadow: none; }
+.project-preview::before, .project-preview::after { content: none !important; display: none !important; }
+.row-art { display: none; }
+img { max-width: 100%; }
+
+/* ================= RESPONSIF ================= */
+@media (max-width: 900px) {
+  :root { --gutter: 5vw; }
+  .scroll-label { font-size: 16px; }
+  .project-list { width: 72%; }
+  .preview-col { right: 4%; width: 42%; }
+  .project-preview { opacity: .82; }
+  .project-row { max-width: 70vw; }
+  .project-title { font-size: clamp(34px, 6vw, 56px); }
+  .project-meta { white-space: normal; overflow: visible; max-width: 64vw; font-size: clamp(10px, 1.7vw, 12px); line-height: 1.28; }
+  .sideword-wrap { left: -1vw; } .sideword { font-size: clamp(220px, 34vw, 360px); }
+  .about-copy { left: 30%; right: 5%; font-size: clamp(17px, 2.8vw, 28px); line-height: 1.4; }
+  .contact-content { top: 38%; left: 30%; right: 5%; }
+  .contact-heading, .contact-email, .social-links { font-size: clamp(18px, 2.4vw, 25px); }
+  .site-footer { left: 30%; right: 5%; font-size: 9px; }
+  .sec-label-about { left: 30%; }
+}
+
+@media (max-width: 600px) {
+  :root { --title-sx: 1.08; }
+  .opening-stage { min-height: 430px; }
+  .project-title { font-size: clamp(27px, 7.4vw, 44px); }
+  .project-meta { max-width: 88vw; font-size: 11px; margin-top: 6px; }
+  .sideword-wrap { left: -10vw; opacity: .9; } .sideword { font-size: clamp(200px, 52vw, 280px); }
+  .about-copy { top: 50%; left: 30%; right: 5%; font-size: clamp(15px, 3.8vw, 20px); line-height: 1.35; }
+  .about-copy p { margin-bottom: 1.4em; }
+  .contact-content { top: 39%; left: 30%; right: 5%; }
+  .contact-heading, .contact-email, .social-links { font-size: clamp(15px, 4vw, 20px); } .contact-rule { height: 1px; }
+  .site-footer { left: 30%; right: 5%; flex-direction: column; align-items: flex-start; gap: 4px; font-size: 10px; }
+  .scroll-label { font-size: 15px; }
+  .vword-b .dy-rest { -webkit-text-stroke-width: 1.5px; }
+  .word-b { -webkit-text-stroke-width: 2px; }
+  .edge-line, .edge-front { height: 3px; }
+}
+@media (max-width: 380px) {
+  :root { --title-sx: 1.04; }
+  .project-title { font-size: 26px; }
+  .about-copy { font-size: 14px; }
+}
+@media (max-height: 560px) {
+  .about-stage, .opening-stage { min-height: 0; }
+  .project-title { font-size: clamp(22px, 8vh, 52px); }
+  .project-meta { font-size: clamp(9px, 2.2vh, 12px); }
+  .about-copy { font-size: clamp(13px, 3.2vh, 22px); line-height: 1.35; }
+  .contact-heading, .contact-email, .social-links { font-size: clamp(14px, 3.6vh, 22px); }
+}
+
+/* ================= HP (≤700px): daftar rapat, gambar terbuka DI BAWAH judul saat tulisan "sampai" ================= */
+@media (max-width: 700px) {
+  :root { --title-sx: 1.06; }
+  .preview-col { display: none; }
+  .project-row::before { display: none; }
+  .project-list { width: 100%; padding: 107vh 5vw 125vh; }
+  .project-row { width: 100%; max-width: 100%; margin: 0 0 12px; }
+  .project-title { font-size: clamp(27px, 7.4vw, 44px); line-height: .95; }
+
+  .project-meta {
+    max-height: 0; margin-top: 0; opacity: 0; overflow: hidden; white-space: normal;
+    max-width: 100%; font-size: 11px; line-height: 1.3; transform: none;
+    transition: max-height .45s var(--ease), margin-top .45s var(--ease), opacity .35s ease;
+  }
+  .project-row.is-open .project-meta { max-height: 7em; margin-top: 6px; opacity: 1; }
+
+  .row-art {
+    display: block; position: relative; width: 100%; height: 0; overflow: hidden; opacity: 0; margin-top: 0;
+    transition: height .6s var(--ease), opacity .5s ease, margin-top .6s var(--ease);
+  }
+  .project-row.is-open .row-art { height: 62vw; max-height: 44vh; opacity: 1; margin-top: 10px; }
+  .row-art-img {
+    position: absolute; inset: 0; width: 100%; height: 100%; animation: none;
+    object-fit: var(--art-fit, cover); object-position: var(--art-position, center);
+    transform: translate(var(--art-x, 0%), var(--art-y, 0%)) scale(var(--art-scale, 1));
+  }
+
+  .sideword-wrap { left: -2vw; opacity: 1; }
+  .sideword { font-size: clamp(140px, 40vw, 200px); }
+  .about-copy { top: 48%; left: 36%; right: 5%; }
+  .contact-content { left: 36%; right: 5%; }
+  .site-footer { left: 36%; right: 5%; }
+  .sec-label-about { left: 36%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; }
+  .project-art, .project-title .ch { animation: none !important; }
+}
+
+
+
+
+/* ================= POPUP CV ================= */
+.cv-modal {
+  position: fixed; inset: 0; z-index: 9800; display: grid; place-items: center;
+  visibility: hidden; opacity: 0; transition: opacity .5s ease, visibility 0s linear .5s;
+}
+.cv-modal.is-open { visibility: visible; opacity: 1; transition: opacity .5s ease; }
+.cv-backdrop { position: absolute; inset: 0; background: rgba(14, 14, 14, .84); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.cv-panel {
+  position: relative; width: min(1120px, 94vw); height: min(92vh, 1000px); height: min(92svh, 1000px);
+  display: flex; flex-direction: column; overflow: hidden; background: #151515; color: var(--white);
+  border: 1px solid #333; border-radius: 10px; box-shadow: 0 30px 80px rgba(0, 0, 0, .55);
+  transform: translateY(34px) scale(.985); transition: transform .7s cubic-bezier(.22, 1, .36, 1);
+}
+.cv-modal.is-open .cv-panel { transform: none; }
+.cv-bar {
+  flex: 0 0 46px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; border-bottom: 1px solid #2c2c2c; background: #151515;
+}
+.cv-title { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.cv-close {
+  appearance: none; border: 0; background: none; color: var(--white); cursor: pointer;
+  font: inherit; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; padding: 8px 2px;
+  transition: opacity .2s ease;
+}
+.cv-close:hover { opacity: .65; }
+.cv-frame { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; background: #151515; }
+.cv-loading { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #777; transition: opacity .4s ease; pointer-events: none; }
+.cv-panel.is-loaded .cv-loading { opacity: 0; }
+html.is-modal, html.is-modal body { overflow: hidden; }
+/* di dalam popup pakai kursor bawaan (kursor kustom tidak bisa mengikuti ke dalam iframe) */
+html.is-modal .cursor-dot, html.is-modal .cursor-ring { opacity: 0 !important; }
+html.is-modal body.has-custom-cursor, html.is-modal body.has-custom-cursor * { cursor: auto !important; }
+@media (max-width: 700px) {
+  .cv-panel { width: 100vw; height: 100vh; height: 100svh; border-radius: 0; border: 0; }
+}
