@@ -8,32 +8,29 @@
   <title>Raïhan Wicaksono — Protofolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Figtree = font cadangan gratis yang paling dekat dengan Mier A. Kalau file Mier A sudah ada di /fonts, font itu otomatis dipakai. -->
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23202020'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-weight='900' font-size='46' fill='%23f0f0f0'%3ER%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=14" />
-  <script src="app.js?v=14" defer></script>
+  <link rel="stylesheet" href="styles.css?v=15" />
+  <link rel="stylesheet" href="mobile.css?v=1" />
+  <script src="app.js?v=15" defer></script>
 </head>
 <body>
-  <!-- Musik latar: baru diputar setelah klik/sentuhan pertama (aturan browser). Nama file memakai %20 untuk spasi. -->
-  <audio id="bg-music" loop preload="auto">
+  <audio id="bg-music" loop preload="none">
     <source src="isaintjames_Your_Life_(mp3cut.net).mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- LOADING SCREEN: awalnya hanya huruf R kosong + petunjuk. Setelah klik/sentuhan pertama,
-       R terisi putih dari bawah, lalu garis merah muncul sebagai penanda selesai loading -->
   <div class="loader" aria-hidden="true">
     <div class="loader-letter loader-outline">R</div>
     <div class="loader-letter loader-fill">R</div>
     <div class="loader-hint">HIT<k style="color: #ec483c;"> ANYWHERE</k>.</div>
   </div>
 
-  <!-- POPUP CV: terbuka saat "Le Profil" diklik (tanpa pindah halaman) -->
   <div class="cv-modal" id="cv-modal" role="dialog" aria-modal="true" aria-label="Profile (CV)" aria-hidden="true">
     <div class="cv-backdrop" data-close></div>
     <div class="cv-panel">
       <div class="cv-bar">
         <span class="cv-title"><k style="color: #ec483c;">P</k>rofile</span>
+        <a class="cv-dl" href="cv.pdf" download="CV-Raihan-Wahyu-Wicaksono.pdf">Download PDF ↓</a>
         <button class="cv-close" type="button" data-close aria-label="Close profile"><span>Close</span> <k style="color: #ec483c;">✕</k></button>
       </div>
       <div class="cv-loading" aria-hidden="true">loading…</div>
@@ -41,7 +38,6 @@
     </div>
   </div>
 
-  <!-- scrollbar minimalis (pengganti scrollbar bawaan browser) -->
   <div class="scrollbar" aria-hidden="true"><div class="scrollbar-thumb"></div></div>
 
   <div class="cursor-ring" aria-hidden="true"></div>
@@ -57,7 +53,6 @@
           <div class="edge-line"></div>
           <div class="word word-light">RAIHAN</div>
         </div>
-        <!-- ujung garis merah yang berada DI DEPAN huruf R (kesan 3D: masuk ke lubang) -->
         <div class="edge-front" aria-hidden="true"></div>
 
         <div class="layer layer-paper" aria-hidden="true">
@@ -65,7 +60,6 @@
           <div class="word word-b"><k>WICAKSONO</k></div>
         </div>
 
-        <!-- kata ini bergerak dari SAMPING: INTERACTIVE kanan → kiri, DYNAMIQUE kiri → kanan -->
         <div class="layer layer-night" aria-hidden="true">
           <div class="vword vword-a"><k style="color: #f5f5f3;">INTERACTIVE</k> <span class="vcap">Simple design. Seamless interaction.</span></div>
           <div class="vword vword-b"><k class="dy-first">D</k><k class="dy-rest">YNAMIQUE</k><span class="vcap">Laisse-toi porter</span></div>
@@ -80,7 +74,6 @@
     <!-- WORK -->
     <section class="work-track" id="work" aria-label="Selected work">
       <div class="work-stage">
-        <!-- bar kertas yang menempel di atas; "Selected work" turun dari tepinya & hilang rapi sebelum About -->
         <div class="work-bar" aria-hidden="true"><div class="sec-label sec-label-work"><k style="color: #ec483c;"> S</k>elected work</div></div>
         <div class="project-list" aria-label="Projects">
 
@@ -92,46 +85,32 @@
               <span class="project-title"><span class="title-filled">Social</span><span class="title-outline">Media</span></span>
               <span class="project-meta"><strong> <k style="color: #ec483c;">Let's </k>moots wid me in </strong> INSTAGRAM, <b> More about me is here</b></span>
             </a>
-            <a class="project-row" aria-label="Marie Morelle — project website" href="https://raihan51nasa.pages.dev/" target="_blank" rel="noopener noreferrer" data-project="3">
+            <a class="project-row" aria-label="La Genèse — project website" href="https://raihan51nasa.pages.dev/" target="_blank" rel="noopener noreferrer" data-project="3">
               <span class="project-title"><span class="title-filled">La </span><span class="title-outline">Genèse</span></span>
-              <span class="project-meta"><strong>Early experiments in structural <K style="color: #ec483c;"> academic</K> code. </strong> Ignore the data :) </span>
+              <span class="project-meta"><strong>Early experiments in structural <k style="color: #ec483c;"> academic</k> code. </strong> Ignore the data :) </span>
             </a>
-            <!-- Le Profil: href tetap ada sebagai cadangan (klik tengah / Ctrl+klik), klik biasa membuka POPUP -->
             <a class="project-row" aria-label="Le Profil — buka CV" href="cv.html" target="_blank" rel="noopener noreferrer" data-project="4" data-popup="cv.html">
               <span class="project-title"><span class="title-filled">Le </span><span class="title-outline">Profil</span></span>
-              <span class="project-meta"><strong><K style="color: #ec483c;">Click </K>to preview the </strong> complete <b>profile.</b></span>
+              <span class="project-meta"><strong><k style="color: #ec483c;">Click </k>to preview the </strong> complete <b>profile.</b></span>
             </a>
         </div>
 
         <div class="preview-col"><div class="project-preview" aria-hidden="true">
-
-          <!-- ===== SETELAN TIAP GAMBAR =====
-               --art-scale : ukuran (1 = penuh, .7 = 70%, 1.2 = 120%)
-               --art-x     : geser kanan(+) / kiri(-)   contoh: 10% atau -10%
-               --art-y     : geser bawah(+) / atas(-)   contoh: 8% atau -8%
-               --art-fit   : cover (memenuhi kotak, tepi gambar bisa terpotong) atau contain (UTUH, tidak terpotong)
-               Kalau gambar terpotong, ganti jadi contain — mengecilkan --art-scale saja tidak cukup untuk cover.
-               --art-position : titik fokus gambar (center, top, bottom, left, right) -->
-
-          <img class="project-art" data-art="0" src="kalbizz.png" alt="Kalbis University"
+          <img class="project-art" data-art="0" src="kalbizz.png" alt="Kalbis University" loading="lazy" decoding="async"
                style="--art-scale: .8; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <!-- Social Media: pakai "contain" supaya gambar UTUH (tidak terpotong). "cover" selalu memotong tepi gambar. -->
-          <img class="project-art" data-art="1" src="instag.png" alt=""
+           <img class="project-art" data-art="1" src="instag.png?v=2" data-src-mobile="instag-putih.png?v=2" alt="" loading="lazy" decoding="async"
                style="--art-scale: .7; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <img class="project-art" data-art="3" src="piano_badge_v2.png" alt=""
+          <img class="project-art" data-art="3" src="piano_badge_v2.png" alt="" loading="lazy" decoding="async"
                style="--art-scale: .7; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <img class="project-art" data-art="4" src="foto_3x4_filter_garis_ec483c.png" alt=""
+          <img class="project-art" data-art="4" src="foto_3x4_filter_garis_ec483c.png" alt="" loading="lazy" decoding="async"
                style="--art-scale: .8; --art-x: 0%; --art-y: -6%; --art-fit: contain; --art-position: center;" />
         </div></div>
       </div>
     </section>
 
-    <!-- ABOUT + CONTACT
-         Satu panggung sticky: kata "About" turun terus dari atas sampai tinggal "out",
-         teks about naik, lalu blok contact naik dari bawah. -->
+    <!-- ABOUT + CONTACT -->
     <section class="about-track" id="about" aria-label="About and contact">
       <div class="about-stage">
-        <!-- tulisan raksasa tipis di latar (bergerak mengikuti scroll) -->
         <div class="about-marquee" aria-hidden="true">
           <div class="about-marquee-track">
             <span>Who</span><i></i><span>am</span><i></i><span>i?</span><i>●</i>
@@ -157,16 +136,14 @@
 <br>
 <br>
 <br>
-<P> Click bagian "<k style="color: #ec483c;">Le Profil</k>" untuk melihat CV.</P>
+<p> Click ⟶ &nbsp; <a class="cv-dl" href="cv.pdf" download="CV-Raihan-Wahyu-Wicaksono.pdf"> Download PDF</a> &nbsp; untuk melihat keseluruhan CV.</p>
           </div>
         </div>
 
         <div class="contact-content" id="contact">
           <div class="contact-heading">Let's Talk</div>
           <div class="contact-rule"></div>
-          <!-- email (kiri) dan Phone (kanan) SEBARIS di bawah garis merah -->
           <div class="contact-row">
-            <!-- alamat email disusun oleh app.js agar tidak diubah jadi "[email protected]" oleh Cloudflare -->
             <a class="contact-email scramble" href="#" data-u="Hello.rwicak" data-d="gmail.com">Email</a>
             <div class="social-links">
               <a class="scramble" href="https://wa.me/6285959186999?text=Halo%2C%20saya%20tertarik%20dengan%20portofolio%20kamu.%20Boleh%20tanya%20lebih%20lanjut%3F" target="_blank" rel="noopener noreferrer">Phone.</a>
@@ -175,7 +152,7 @@
         </div>
 
         <footer class="site-footer">
-          <span>Raihan Wïcaksono © <K style="color: #ec483c;">2026</K> All rights reserved.</span>
+          <span>Raihan Wïcaksono © <k style="color: #ec483c;">2026</k> All rights reserved.</span>
         </footer>
       </div>
     </section>
