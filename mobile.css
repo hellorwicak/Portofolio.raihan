@@ -1,0 +1,73 @@
+/* mobile.css — taruh SETELAH styles.css. Perbaikan HP + tombol download CV */
+
+/* tombol download PDF di popup CV (semua ukuran layar) */
+.cv-dl {
+  margin-left: auto; margin-right: 18px; color: var(--white); text-decoration: none;
+  font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  border: 1px solid var(--accent); padding: 7px 12px; border-radius: 99px; transition: background .2s ease;
+}
+.cv-dl:hover, .cv-dl:active { background: var(--accent); }
+
+/* tombol download di dalam paragraf About (berlaku di HP dan PC; ukuran tetap, tidak ikut membesar bersama teks) */
+.about-copy .cv-dl {
+  display: inline-block; margin: 0 .25em; padding: .5em 1.1em; vertical-align: middle;
+  font-size: clamp(11px, 1vw, 14px); line-height: 1; white-space: nowrap; letter-spacing: .12em;
+}
+
+/* ---------- performa di layar sentuh ---------- */
+@media (hover: none), (pointer: coarse) {
+  .scrollbar { display: none !important; }              /* mix-blend-mode itu berat di HP */
+  .cv-backdrop { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, .94); }
+  html, body { overscroll-behavior-y: none; }
+}
+
+/* ---------- HP ---------- */
+@media (max-width: 700px) {
+  /* 1) Penyebab area putih: stage setinggi 100svh, padahal layar membesar saat address bar menghilang.
+        Pakai 100vh (tinggi terbesar) + latar track gelap supaya tidak ada celah terang. */
+  .opening-track { background: var(--ink); }
+  .opening-stage, .about-stage { height: 100vh; min-height: 0; }
+  .work-track, .about-track { margin-top: -100vh; }
+  .work-track { clip-path: none; }
+
+  /* 2) Work = kartu bertumpuk. Scroll pelan: kartu 1 muncul + gambar terbuka,
+        scroll lagi: kartu 2 naik MENUTUPI kartu 1, dan seterusnya. */
+  /* bar "Selected work": solid, tanpa gradasi/blur */
+  .work-bar { height: 7vh; margin-bottom: -7vh; background: var(--paper); }
+  .project-list { width: 100%; padding: 0; counter-reset: row; }
+  .project-row {
+    --fg: var(--ink); --bg: var(--paper);
+    position: sticky; top: 0; display: flex; flex-direction: column; justify-content: center;
+    width: 100%; max-width: 100%; height: 100vh; margin: 0; padding: 12vh 6vw 6vh;
+    background: var(--bg); color: var(--fg); translate: none; transform: none !important;
+    border-radius: 22px 22px 0 0; box-shadow: 0 -18px 40px rgba(0, 0, 0, .18);
+    overflow: hidden;
+  }
+  .project-row:nth-child(even) { --fg: var(--white); --bg: var(--ink); }
+  .project-row::before { display: block; top: 9.5vh; left: 6vw; }
+
+  .project-title {
+    flex-direction: column; align-items: flex-start; gap: 0;
+    font-size: clamp(40px, 14vw, 80px); line-height: .92; transform: none;
+  }
+  .title-filled { color: var(--fg); }
+  .title-outline { -webkit-text-stroke: 1.1px var(--fg); }
+
+  .project-meta {
+    max-height: none; margin-top: 14px; opacity: 1; overflow: visible; color: #999;
+    font-size: 12px; line-height: 1.4; transform: none;
+  }
+  .project-meta strong, .project-meta b { color: var(--fg); }
+
+  .row-art {
+    display: block; position: relative; flex: 0 0 auto; width: 100%; height: 40vh; max-height: none;
+    margin-top: 3vh; overflow: hidden; border-radius: 10px; opacity: 1;
+    background: rgba(128, 128, 128, .08);
+    clip-path: inset(100% 0 0 0); transition: clip-path .9s var(--ease);
+  }
+  .project-row.is-open .row-art { height: 40vh; max-height: none; margin-top: 3vh; clip-path: inset(0 0 0 0); }
+  .row-art-img { transition: transform 1.4s var(--ease); }
+
+  /* about: kata raksasa & marquee dibuat lebih ringan */
+  .about-marquee { display: none; }
+}
