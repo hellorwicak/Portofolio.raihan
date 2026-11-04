@@ -16,7 +16,6 @@
   const openingStage = $('.opening-stage');
   const paperLayer = $('.layer-paper');
   const nightLayer = $('.layer-night');
-  const riseLayer = $('.layer-rise');
   const wordLight = $('.word-light');
   const wordInk = $('.word-ink');
   const wordB = $('.word-b');
@@ -35,6 +34,7 @@
   const projectArts = [...document.querySelectorAll('.project-art')];
 
   const aboutTrack = $('.about-track');
+  const aboutStage = $('.about-stage');   // PERBAIKAN: variabel CSS about ditulis di sini, bukan di <html>
   const aboutWord = $('.sideword');
   const aboutCopy = $('.about-copy');
   const aboutParas = [...document.querySelectorAll('.about-copy p')];
@@ -59,7 +59,6 @@
     });
   }
 
-  /* scramble teks kecil (meta): huruf/angka acak lalu berubah jadi teks asli, kiri → kanan */
   const META_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789#@%&*+';
   const metaStore = new Map();
   function collectText(el) {
@@ -94,9 +93,6 @@
 
   /* =========================================================
      PROJECT PREVIEW (hover)
-     - Gambar muncul saat kursor kena tulisan, lalu MENGAMBANG pelan (CSS).
-     - Gambar bertahan saat kursor keluar, dan HILANG setelah 5 detik
-       kursor tidak menyentuh tulisan (atau gambarnya).
      ========================================================= */
   const IDLE_MS = 5000;
   let activeProject = -1;
@@ -109,7 +105,7 @@
       if (i === index) row.setAttribute('aria-current', 'true');
       else row.removeAttribute('aria-current');
     });
-    const key = projectRows[index].dataset.project;   // cocokkan gambar lewat data-project ↔ data-art
+    const key = projectRows[index].dataset.project;
     projectArts.forEach((art) => art.classList.toggle('is-visible', art.dataset.art === key));
     projectPreview && projectPreview.classList.add('has-active');
   }
@@ -124,7 +120,7 @@
     projectPreview && projectPreview.classList.remove('has-active');
   }
 
-  /* slot gambar di dalam tiap baris (dipakai layout HP: gambar muncul di bawah judul) */
+  /* slot gambar di dalam tiap baris (layout HP: gambar di bawah judul) */
   projectRows.forEach((row) => {
     const art = projectArts.find((a) => a.dataset.art === row.dataset.project);
     if (!art) return;
@@ -133,13 +129,14 @@
     const im = art.cloneNode();
     im.className = 'row-art-img';
     im.removeAttribute('data-art');
+    if (art.dataset.srcMobile) im.src = art.dataset.srcMobile;   // versi putih untuk kartu gelap di HP
     fig.appendChild(im);
     row.appendChild(fig);
   });
 
-  const isStacked = () => window.matchMedia('(max-width: 700px)').matches;
+  const stackedMQ = window.matchMedia('(max-width: 700px)');
+  const isStacked = () => stackedMQ.matches;
 
-  /* timer 5 detik: gambar hilang kalau kursor tidak menyentuh tulisan */
   let idleTimer = 0;
   let overPreview = false;
   const cancelIdle = () => clearTimeout(idleTimer);
@@ -156,7 +153,6 @@
     projectPreview.addEventListener('mouseleave', () => { overPreview = false; armIdle(); });
   }
 
-  // Hover yang timbul hanya karena halaman DI-SCROLL diabaikan.
   let lastScrollAt = 0;
   window.addEventListener('scroll', () => { lastScrollAt = performance.now(); }, { passive: true });
 
@@ -180,7 +176,7 @@
     row.addEventListener('mousemove', (e) => {
       if ((e.movementX || e.movementY) && !row.classList.contains('is-hover')) hoverRow(index);
     }, { passive: true });
-    // HP: ketuk sekali = buka gambar di bawah judul; ketuk lagi = buka link / popup
+    // HP: kalau gambar belum terbuka, ketukan pertama membukanya; setelah itu buka link / popup
     row.addEventListener('click', (e) => {
       if (isStacked() && !row.classList.contains('is-open')) {
         e.preventDefault();
@@ -190,7 +186,6 @@
         if (meta) scrambleMeta(meta);
         return;
       }
-      // "Le Profil": klik biasa = POPUP CV (Ctrl/Shift/klik tengah tetap membuka tab baru)
       if (row.dataset.popup && !(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1)) {
         e.preventDefault();
         openCv(row.dataset.popup);
@@ -202,7 +197,7 @@
   });
 
   /* =========================================================
-     TEXT SCRAMBLE (hover pada email & link sosial)
+     TEXT SCRAMBLE (email & link sosial)
      ========================================================= */
   const SCRAMBLE_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789@.#*+';
   function scramble(el) {
@@ -235,13 +230,9 @@
      ========================================================= */
   const FINAL_LS = -0.04;
   const START_LS = 2.2;
-  // seberapa jauh garis merah melewati lubang R (di DEPAN huruf), dalam satuan ukuran huruf.
-  // 0 = berhenti di tepi lubang · 0.06 = masuk sedikit ke sisi kanan R · ±0.11 = tembus penuh (tidak ada bagian tersembunyi)
   const LINE_OVERSHOOT = 0.00;
-  // Lamanya kertas putih naik menutupi layar, dalam satuan "tinggi layar" scroll (1 = secepat scroll biasa).
-  // Makin besar = makin pelan & lembut. CSS .project-list (padding-top) = 14vh + 100vh × (nilai − 1).
   const WORK_EDGE_D = 1.9;
-  let edgeDraw = 0;   // 0 = garis belum keluar, 1 = ujung garis sudah di dalam lubang R
+  let edgeDraw = 0;
 
   const M = {
     vw: 0, vh: 0, L: 0, copyH: 0, ou: 10, holeX: 0, holeY: 0, holeL: 0, holeR: 0, glyphL: 0, frontX: 0, lh: 3,
@@ -271,7 +262,6 @@
     return { fs, w: (w100 * fs) / 100 };
   }
 
-  // pusat "lubang" huruf R: gambar R di kanvas lalu isi area luar; sisanya yang tertutup = lubang
   function findRHole(fs, left0, stageH) {
     try {
       const cs = getComputedStyle(wordLight);
@@ -320,7 +310,7 @@
   function measure() {
     if (!openingStage) return;
     M.vw = window.innerWidth;
-    M.ou = Math.max(1, (openingTrack.offsetHeight - window.innerHeight) / window.innerHeight);   // panjang scroll opening (satuan tinggi layar)
+    M.ou = Math.max(1, (openingTrack.offsetHeight - window.innerHeight) / window.innerHeight);
     M.vh = openingStage.clientHeight || window.innerHeight;
 
     const a = fitWord(wordInk);
@@ -330,27 +320,26 @@
 
     const hole = findRHole(a.fs, M.A.left0, M.vh) || { x: M.A.left0 + a.fs * 0.33, y: M.vh / 2 - a.fs * 0.08 };
     M.holeX = hole.x; M.holeY = hole.y;
-    M.holeR = (hole.right != null ? hole.right : hole.x + a.fs * 0.1) + a.fs * LINE_OVERSHOOT;   // tepi kanan lubang + overshoot (garis berhenti di depan R sampai sini)
+    M.holeR = (hole.right != null ? hole.right : hole.x + a.fs * 0.1) + a.fs * LINE_OVERSHOOT;
     M.holeL = hole.left != null ? hole.left : hole.x - a.fs * 0.1;
     M.glyphL = hole.glyphLeft != null ? hole.glyphLeft : hole.x - a.fs * 0.3;
-    M.frontX = (M.holeL + M.glyphL) / 2;                 // ujung depan garis = tengah batang kiri huruf R
+    M.frontX = (M.holeL + M.glyphL) / 2;
     M.lh = (edgeLine && edgeLine.offsetHeight) || 3;
 
     const b = fitWord(wordB);
     wordB.style.fontSize = `${b.fs}px`;
     M.B = { fs: b.fs, w: b.w, leftF: (M.vw - b.w) / 2 };
 
-    // kata besar horizontal (INTERACTIVE di baris atas, DYNAMIQUE di baris bawah)
     const vfs = Math.min(M.vh * 0.30, M.vw * 0.40);
     [vwordA, vwordB].forEach((el) => {
       el.style.fontSize = `${vfs}px`;
-      el.style.setProperty('--vfs', `${vfs}px`);   // dipakai teks kecil (.vcap) untuk posisi
+      el.style.setProperty('--vfs', `${vfs}px`);
     });
     M.VA = { w: vwordA.offsetWidth, y: M.vh * 0.33 - vfs / 2 };
     M.VB = { w: vwordB.offsetWidth, y: M.vh * 0.69 - vfs / 2 };
 
     M.L = aboutWord ? aboutWord.offsetWidth : 0;
-    M.copyH = aboutCopy ? aboutCopy.offsetHeight : 0;   // tinggi teks about → jarak naiknya dihitung otomatis
+    M.copyH = aboutCopy ? aboutCopy.offsetHeight : 0;
   }
 
   function placeWord(el, left, ls) {
@@ -360,19 +349,12 @@
 
   /* =========================================================
      OPENING — timeline (p = 0 … 1)
-
-       0.012  kertas menyapu dari kanan, "RAIHAN" melebar lalu merapat
-       0.310  "WICAKSONO" (putih) masuk dari kanan → terus ke kiri
-       0.640  panel gelap menyapu dari kanan
-       0.660  "INTERACTIVE" (putih) meluncur dari SAMPING: kanan → kiri
-       0.745  "DYNAMIQUE" (outline, huruf D merah) meluncur kiri → kanan
-       0.930  kertas naik dari bawah sampai menutup penuh → Work
      ========================================================= */
   function updateOpening(p) {
     if (!paperLayer || !M.vw) return;
     const { vw } = M;
-    const u = p * M.ou;     // posisi scroll dalam satuan "tinggi layar"
-    const po = u / 8;       // fase awal (RAIHAN, WICAKSONO) tetap memakai kecepatan scroll yang lama
+    const u = p * M.ou;
+    const po = u / 8;
 
     const wipe = smooth(0.012, 0.13, po);
     paperLayer.style.clipPath = `inset(0 0 0 ${((1 - wipe) * 100).toFixed(3)}%)`;
@@ -384,9 +366,6 @@
     placeWord(wordLight, leftA, lsA);
     placeWord(wordInk, leftA, lsA);
 
-    // garis merah HORIZONTAL sepanjang layar. Di DEPAN huruf R dari tepi kiri sampai tepi kanan lubang
-    // (melintasi batang & lubang), lalu masuk DI BELAKANG sisi kanan R dan muncul lagi di kanannya.
-    // Saat discroll: langsung meluncur ke kiri menarik latar putih (tanpa mundur), memendek, hilang.
     if (edgeLine) {
       const xr = (1 - wipe) * vw;
       const len = Math.max(0, vw * edgeDraw * (1 - wipe));
@@ -396,7 +375,7 @@
       edgeLine.style.transform = `translate3d(${xl.toFixed(1)}px, ${y}px, 0)`;
       edgeLine.style.visibility = len > 0.5 ? 'visible' : 'hidden';
       if (edgeFront) {
-        const holeR = M.holeR + (leftA - M.A.left0);          // ikut posisi huruf R yang bergeser
+        const holeR = M.holeR + (leftA - M.A.left0);
         const right = Math.min(xr, holeR);
         const fl = Math.max(0, right - xl);
         edgeFront.style.width = `${fl.toFixed(1)}px`;
@@ -405,14 +384,12 @@
       }
     }
 
-    // "WICAKSONO" (outline): masuk dari KANAN lalu TERUS bergeser ke KIRI mengikuti scroll
     const tb = clamp((po - 0.31) / 0.43);
     const leftB = lerp(vw * 0.94, -(M.B.w + vw * 0.06), tb);
     const lsB = lerp(0.40, -0.005, easeOut((po - 0.31) / 0.20, 2));
     placeWord(wordB, leftB, lsB);
     wordB.style.visibility = po > 0.30 && po < 0.82 ? 'visible' : 'hidden';
 
-    // panel gelap, lalu INTERACTIVE & DYNAMIQUE meluncur dari samping — jarak scroll dibuat lebih panjang (lebih pelan)
     const night = easeOut((u - 5.12) / 1.28, 2);
     nightLayer.style.clipPath = `inset(0 0 0 ${((1 - night) * 100).toFixed(3)}%)`;
 
@@ -427,32 +404,29 @@
   }
 
   /* =========================================================
-     ABOUT + CONTACT (p = 0 … 1 sepanjang .about-track)
+     ABOUT + CONTACT
      ========================================================= */
   function updateAbout(p) {
     const vh = window.innerHeight;
     const y0 = vh * 0.72;
     const y1 = Math.max(y0 + vh * 0.4, M.L + vh * 0.05);
-    root.style.setProperty('--about-word-y', `${lerp(y0, y1, p).toFixed(2)}px`);
+    aboutStage.style.setProperty('--about-word-y', `${lerp(y0, y1, p).toFixed(2)}px`);
 
-    // jarak naik dihitung dari tinggi teks sebenarnya → teks selalu keluar penuh sebelum contact naik
     const copyTop = aboutCopy ? aboutCopy.offsetTop : vh * 0.56;
     const copyTravel = ((copyTop + M.copyH + vh * 0.06) / vh) * 100;
-    root.style.setProperty('--about-copy-y', `${(-clamp(p / 0.78) * copyTravel).toFixed(3)}vh`);
+    aboutStage.style.setProperty('--about-copy-y', `${(-clamp(p / 0.78) * copyTravel).toFixed(3)}vh`);
 
-    // paragraf masuk bergantian: yang di bawah mulai agak turun lalu menyusul ke jarak normal (interaktif, tanpa tumpang tindih)
     const settle = smooth(0, 0.5, p);
     aboutParas.forEach((el, i) => el.style.setProperty('--ps', `${(i * 5 * (1 - settle)).toFixed(2)}vh`));
 
-    root.style.setProperty('--strike-1', smooth(0.03, 0.12, p).toFixed(4));
-    root.style.setProperty('--strike-2', smooth(0.12, 0.22, p).toFixed(4));
+    aboutStage.style.setProperty('--strike-1', smooth(0.03, 0.12, p).toFixed(4));
+    aboutStage.style.setProperty('--strike-2', smooth(0.12, 0.22, p).toFixed(4));
 
     const cp = smooth(0.46, 0.78, p);
-    root.style.setProperty('--contact-y', `${((1 - cp) * 110).toFixed(3)}vh`);
-    root.style.setProperty('--rule', smooth(0.72, 1.0, p).toFixed(4));
+    aboutStage.style.setProperty('--contact-y', `${((1 - cp) * 110).toFixed(3)}vh`);
+    aboutStage.style.setProperty('--rule', smooth(0.72, 1.0, p).toFixed(4));
 
-    // tulisan raksasa "Who am i?" bergeser pelan ke kiri mengikuti scroll
-    root.style.setProperty('--marq', (p * 70).toFixed(3));
+    aboutStage.style.setProperty('--marq', (p * 70).toFixed(3));
   }
 
   /* =========================================================
@@ -481,21 +455,19 @@
   function renderSceneFrame() {
     updateOpening(current.opening);
 
-    // "Selected work" turun dari tepi atas kertas begitu kertas menutup layar, lalu
-    // naik & memudar RAPI sebelum tirai gelap About tiba.
-    // ---- Kertas putih naik PELAN dengan easing sendiri (bukan 1:1 dengan scroll) ----
-    // Tepi atas kertas dikendalikan lewat clip-path: mulai lembut, melaju di tengah, berhenti lembut di atas.
+    const stacked = isStacked();
     const vh = window.innerHeight;
-    const natTop = workTrack.offsetTop - window.scrollY;      // posisi alami section Work di layar
-    const eN = (vh - natTop) / vh;                            // 0 saat kertas mulai terlihat
-    const tE = clamp(eN / WORK_EDGE_D);
+    const natTop = workTrack.offsetTop - window.scrollY;
+    const eN = (vh - natTop) / vh;
+    const tE = clamp(eN / (stacked ? 1 : WORK_EDGE_D));   // HP: kertas naik normal, tanpa easing lambat
     const gE = tE * tE * (3 - 2 * tE);
-    const edgeY = vh * (1 - gE);                              // tepi atas kertas di layar (px)
+    const edgeY = vh * (1 - gE);
     const topClip = edgeY > 0.5 ? Math.max(0, edgeY - natTop) : 0;
-    const tilt = 0.035 * vh * (1 - smooth(0.8, 1, tE));       // kemiringan tepi mengecil saat tiba di atas
-    workTrack.style.clipPath = `polygon(0 ${topClip.toFixed(1)}px, 100% ${(topClip + tilt).toFixed(1)}px, 100% 100%, 0 100%)`;
+    const tilt = 0.035 * vh * (1 - smooth(0.8, 1, tE));
+    workTrack.style.clipPath = stacked
+      ? 'none'
+      : `polygon(0 ${topClip.toFixed(1)}px, 100% ${(topClip + tilt).toFixed(1)}px, 100% 100%, 0 100%)`;
 
-    // "Selected work": turun begitu tepi kertas mendekati atas layar; naik & memudar rapi sebelum tirai About
     const aE = current.aboutEnter;
     const la = clamp((0.16 * vh - edgeY) / (0.16 * vh));
     const lo = smooth(0, 0.6, la) * (1 - smooth(0.3, 0.75, aE));
@@ -506,16 +478,17 @@
     }
     if (workBar) workBar.style.opacity = (1 - smooth(0.2, 0.65, aE)).toFixed(3);
 
-    // sedikit jeda bergantian pada baris (interaktif tapi lembut)
-    const e1 = 1 - smooth(0, 2.2, eN);
-    projectRows.forEach((row, i) => row.style.setProperty('--row-enter', `${((4 + 3 * i) * e1).toFixed(3)}vh`));
-    if (previewCol) previewCol.style.setProperty('--pv-enter', `${(10 * e1).toFixed(3)}vh`);
+    if (!stacked) {
+      const e1 = 1 - smooth(0, 2.2, eN);
+      projectRows.forEach((row, i) => row.style.setProperty('--row-enter', `${((4 + 3 * i) * e1).toFixed(3)}vh`));
+      if (previewCol) previewCol.style.setProperty('--pv-enter', `${(10 * e1).toFixed(3)}vh`);
+    }
 
     updateAbout(current.about);
 
-    // HP: tiap tulisan yang "sampai" garis pemicu otomatis membuka gambarnya di bawah judul
-    if (isStacked() && current.enter > 0.5) {
-      const trigger = window.innerHeight * 0.55;
+    // HP: kartu yang sudah naik melewati garis pemicu otomatis membuka gambarnya
+    if (stacked && current.enter > 0.5) {
+      const trigger = vh * 0.55;
       projectRows.forEach((row) => {
         const open = row.getBoundingClientRect().top <= trigger || row.dataset.tapped === '1';
         if (open !== row.classList.contains('is-open')) {
@@ -532,7 +505,8 @@
 
     const dt = previousFrameTime ? Math.min(40, timestamp - previousFrameTime) : 16.67;
     previousFrameTime = timestamp;
-    const factor = reduceMotion ? 1 : 1 - Math.exp(-dt / (smoothOn ? 60 : 105));
+    // PERBAIKAN: di layar sentuh tanpa lerp (scroll bawaan browser sudah halus; lerp bikin patah-patah)
+    const factor = (reduceMotion || !smoothOn) ? 1 : 1 - Math.exp(-dt / 60);
 
     current.opening += (target.opening - current.opening) * factor;
     current.enter += (target.enter - current.enter) * factor;
@@ -584,8 +558,12 @@
 
   window.addEventListener('scroll', requestSceneUpdate, { passive: true });
 
+  // PERBAIKAN: abaikan resize yang hanya mengubah tinggi (address bar HP naik/turun)
   let resizeTimer = 0;
+  let lastW = window.innerWidth;
   window.addEventListener('resize', () => {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       measure();
@@ -597,8 +575,7 @@
   }, { passive: true });
 
   /* =========================================================
-     CUSTOM CURSOR — titik + ring tipis yang mengikuti dengan jeda
-     (titik membesar di atas link & gambar; ring mengecil)
+     CUSTOM CURSOR
      ========================================================= */
   if (finePointer) {
     const dot = $('.cursor-dot');
@@ -643,7 +620,7 @@
   }
 
   /* =========================================================
-     SCROLLBAR MINIMALIS (garis tipis + thumb, bisa diseret)
+     SCROLLBAR MINIMALIS (hanya desktop; di HP disembunyikan lewat CSS)
      ========================================================= */
   const sb = $('.scrollbar');
   const sbThumb = $('.scrollbar-thumb');
@@ -656,7 +633,7 @@
     return { vh, docH, thumbH };
   }
   function updateScrollbar() {
-    if (!sb) return;
+    if (!sb || !finePointer) return;
     const { vh, docH, thumbH } = sbMetrics();
     const max = Math.max(1, docH - vh);
     const y = (window.scrollY / max) * (vh - thumbH);
@@ -689,9 +666,7 @@
   }
 
   /* =========================================================
-     SMOOTH SCROLL — roda mouse diberi inersia halus (seperti web asli).
-     Tanpa ini bagian Work (yang memakai scroll bawaan browser) terasa kaku/melompat.
-     Layar sentuh tetap memakai scroll bawaan.
+     SMOOTH SCROLL (mouse wheel saja)
      ========================================================= */
   let smoothOn = false;
   (function initSmoothScroll() {
@@ -716,13 +691,11 @@
       targetY = clamp(targetY + e.deltaY * unit, 0, maxY());
       if (!running) { running = true; last = 0; window.requestAnimationFrame(frame); }
     }, { passive: false });
-    // scroll dari sumber lain (scrollbar, keyboard): sinkronkan posisi
     window.addEventListener('scroll', () => { if (!running) { curY = targetY = window.scrollY; } }, { passive: true });
   })();
 
   /* =========================================================
-     LOADING SCREEN — huruf R terisi putih dari bawah. Setelah penuh: garis merah
-     (penanda selesai) + tulisan "scroll" muncul
+     LOADING SCREEN
      ========================================================= */
   const loader = $('.loader');
   const loaderFill = $('.loader-fill');
@@ -735,7 +708,6 @@
     });
   }
 
-  // garis merah meluncur dari tepi kanan masuk ke lubang R (penanda selesai loading)
   function drawEdgeLine() {
     if (!edgeLine) return;
     const t0 = performance.now(), D = reduceMotion ? 1 : 1800;
@@ -748,14 +720,13 @@
     window.requestAnimationFrame(step);
   }
 
-  /* musik latar — hanya bisa diputar setelah ada klik/sentuhan pertama (aturan browser) */
   const bgMusic = $('#bg-music');
-  const MUSIC_VOLUME = 0.05;   // 0.05 = 5% · coba 0.02 (2%) atau 0.01 (1%) kalau terlalu keras
+  const MUSIC_VOLUME = 0.05;
   function playMusic() {
     if (!bgMusic) return;
     bgMusic.volume = MUSIC_VOLUME;
     const pr = bgMusic.play();
-    if (pr && pr.catch) pr.catch(() => { /* file belum ada / diblokir browser */ });
+    if (pr && pr.catch) pr.catch(() => {});
   }
 
   function startLoader() {
@@ -763,9 +734,8 @@
     window.scrollTo(0, 0);
     if (!loader) { root.classList.remove('is-loading'); root.classList.add('is-loaded'); drawEdgeLine(); return; }
 
-    layoutLoader();   // tampilan awal: huruf R KOSONG + petunjuk; halaman terkunci (tidak bisa di-scroll)
+    layoutLoader();
 
-    // loading baru berjalan setelah klik / sentuhan pertama (Enter / Spasi juga boleh)
     let begun = false;
     const EVENTS = ['click', 'touchend', 'keydown'];
     const begin = (e) => {
@@ -773,7 +743,7 @@
       if (begun) return;
       begun = true;
       EVENTS.forEach((t) => window.removeEventListener(t, begin));
-      playMusic();                              // harus dipanggil di dalam event klik/sentuh
+      playMusic();
       loader.classList.add('is-started');
       runLoading();
     };
@@ -797,7 +767,6 @@
         loaderFill.style.clipPath = `inset(${p >= 1 ? 0 : lerp(88, 14, eased).toFixed(2)}% 0 0 0)`;
 
         if (p >= 1) {
-          // putih sudah penuh → loader memudar, garis merah masuk lubang R + "scroll" muncul, scroll dibuka
           window.setTimeout(() => {
             loader.classList.add('is-done');
             root.classList.add('is-loaded');
@@ -820,7 +789,7 @@
   }
 
   /* =========================================================
-     POPUP CV — "Le Profil" membuka cv.html di dalam jendela popup (tanpa pindah halaman)
+     POPUP CV
      ========================================================= */
   const cvModal = $('#cv-modal');
   const cvFrame = $('.cv-frame');
@@ -833,7 +802,7 @@
     if (cvFrame.getAttribute('data-src') !== url) {
       cvPanel.classList.remove('is-loaded');
       cvFrame.setAttribute('data-src', url);
-      cvFrame.src = url;                         // dimuat saat pertama kali dibuka saja
+      cvFrame.src = url;
     }
     cvLastFocus = document.activeElement;
     cvModal.classList.add('is-open');
