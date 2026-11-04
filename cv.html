@@ -1,161 +1,222 @@
-<!doctype html>
-<html lang="en" class="is-loading">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#202020" />
-  <meta name="description" content="Portfolio of Raïhan Wicaksono — Information Systems student and developer." />
-  <title>Raïhan Wicaksono — Protofolio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23202020'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-weight='900' font-size='46' fill='%23f0f0f0'%3ER%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=15" />
-  <link rel="stylesheet" href="mobile.css?v=1" />
-  <script src="app.js?v=15" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Raihan Wahyu - Dark Portfolio Style</title>
+    
+    <!-- Google Fonts: Inter for clean modern text, Archivo Black for giant headers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-dark': '#151515',
+                        'text-light': '#f0f0f0',
+                        'accent-red': '#ec483c', 
+                        'text-muted': '#a0a0a0'
+                    },
+                    fontFamily: {
+                        display: ['"Archivo Black"', 'sans-serif'],
+                        body: ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #151515;
+            color: #f0f0f0;
+        }
+
+        /* Teks vertikal raksasa di sebelah kiri */
+        .vertical-hero-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: right;
+        }
+
+        /* Efek outline transparan di background */
+        .bg-outline-text {
+            -webkit-text-stroke: 1px #333333;
+            color: transparent;
+            white-space: nowrap;
+        }
+
+        /* Layout untuk ukuran A4 */
+        .cv-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            min-height: 1414px; 
+            position: relative;
+            overflow: hidden;
+            background-color: #151515;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+    </style>
 </head>
-<body>
-  <audio id="bg-music" loop preload="none">
-    <source src="isaintjames_Your_Life_(mp3cut.net).mp3" type="audio/mpeg" />
-  </audio>
+<body class="font-body antialiased p-0 md:p-8">
 
-  <div class="loader" aria-hidden="true">
-    <div class="loader-letter loader-outline">R</div>
-    <div class="loader-letter loader-fill">R</div>
-    <div class="loader-hint">HIT<k style="color: #ec483c;"> ANYWHERE</k>.</div>
-  </div>
-
-  <div class="cv-modal" id="cv-modal" role="dialog" aria-modal="true" aria-label="Profile (CV)" aria-hidden="true">
-    <div class="cv-backdrop" data-close></div>
-    <div class="cv-panel">
-      <div class="cv-bar">
-        <span class="cv-title"><k style="color: #ec483c;">P</k>rofile</span>
-        <a class="cv-dl" href="cv.pdf" download="CV-Raihan-Wahyu-Wicaksono.pdf">Download PDF ↓</a>
-        <button class="cv-close" type="button" data-close aria-label="Close profile"><span>Close</span> <k style="color: #ec483c;">✕</k></button>
-      </div>
-      <div class="cv-loading" aria-hidden="true">loading…</div>
-      <iframe class="cv-frame" title="CV Raihan Wahyu Wicaksono"></iframe>
-    </div>
-  </div>
-
-  <div class="scrollbar" aria-hidden="true"><div class="scrollbar-thumb"></div></div>
-
-  <div class="cursor-ring" aria-hidden="true"></div>
-  <div class="cursor-dot" aria-hidden="true"></div>
-
-  <main>
-    <!-- OPENING -->
-    <section class="opening-track" id="top" aria-label="Introduction">
-      <div class="opening-stage">
-        <h1 class="sr-only">RAIHAN WICAKSONO — Student &amp; Developer</h1>
-
-        <div class="layer layer-base" aria-hidden="true">
-          <div class="edge-line"></div>
-          <div class="word word-light">RAIHAN</div>
+    <div class="cv-container flex flex-col md:flex-row">
+        
+        <!-- BACKGROUND OUTLINE TEXT -->
+        <div class="absolute top-[10%] right-[-10%] text-[15rem] font-display bg-outline-text pointer-events-none select-none z-0 leading-[0.8]">
+            RESUME
         </div>
-        <div class="edge-front" aria-hidden="true"></div>
-
-        <div class="layer layer-paper" aria-hidden="true">
-          <div class="word word-ink">RAIHAN</div>
-          <div class="word word-b"><k>WICAKSONO</k></div>
+        <div class="absolute bottom-[20%] right-[-5%] text-[10rem] font-display bg-outline-text pointer-events-none select-none z-0 opacity-50 leading-[0.8]">
+            DEV
         </div>
 
-        <div class="layer layer-night" aria-hidden="true">
-          <div class="vword vword-a"><k style="color: #f5f5f3;">INTERACTIVE</k> <span class="vcap">Simple design. Seamless interaction.</span></div>
-          <div class="vword vword-b"><k class="dy-first">D</k><k class="dy-rest">YNAMIQUE</k><span class="vcap">Laisse-toi porter</span></div>
-        </div>
-
-        <div class="layer layer-rise" aria-hidden="true"></div>
-
-        <div class="scroll-label" aria-hidden="true"><span><k style="color: #ec483c;">s</k>croll</span></div>
-      </div>
-    </section>
-
-    <!-- WORK -->
-    <section class="work-track" id="work" aria-label="Selected work">
-      <div class="work-stage">
-        <div class="work-bar" aria-hidden="true"><div class="sec-label sec-label-work"><k style="color: #ec483c;"> S</k>elected work</div></div>
-        <div class="project-list" aria-label="Projects">
-
-            <a class="project-row" aria-label="Kalbis University" href="https://kalbis.ac.id/" target="_blank" rel="noopener noreferrer" data-project="0">
-              <span class="project-title"><span class="title-filled">Kalbis</span><span class="title-outline">University</span></span>
-              <span class="project-meta"><strong>Bachelor of <k style="color: #ec483c;">Information Systems </k> students at </strong> Kalbis University - <b>2025/2026 - NOW</b></span>
-            </a>
-            <a class="project-row" aria-label="Instagram" href="https://www.instagram.com/hello.rwicak/" target="_blank" rel="noopener noreferrer" data-project="1">
-              <span class="project-title"><span class="title-filled">Social</span><span class="title-outline">Media</span></span>
-              <span class="project-meta"><strong> <k style="color: #ec483c;">Let's </k>moots wid me in </strong> INSTAGRAM, <b> More about me is here</b></span>
-            </a>
-            <a class="project-row" aria-label="La Genèse — project website" href="https://raihan51nasa.pages.dev/" target="_blank" rel="noopener noreferrer" data-project="3">
-              <span class="project-title"><span class="title-filled">La </span><span class="title-outline">Genèse</span></span>
-              <span class="project-meta"><strong>Early experiments in structural <k style="color: #ec483c;"> academic</k> code. </strong> Ignore the data :) </span>
-            </a>
-            <a class="project-row" aria-label="Le Profil — buka CV" href="cv.html" target="_blank" rel="noopener noreferrer" data-project="4" data-popup="cv.html">
-              <span class="project-title"><span class="title-filled">Le </span><span class="title-outline">Profil</span></span>
-              <span class="project-meta"><strong><k style="color: #ec483c;">Click </k>to preview the </strong> complete <b>profile.</b></span>
-            </a>
-        </div>
-
-        <div class="preview-col"><div class="project-preview" aria-hidden="true">
-          <img class="project-art" data-art="0" src="kalbizz.png" alt="Kalbis University" loading="lazy" decoding="async"
-               style="--art-scale: .8; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <img class="project-art" data-art="1" src="instag.png" data-src-mobile="instag-putih.png" alt="" loading="lazy" decoding="async"
-               style="--art-scale: .7; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <img class="project-art" data-art="3" src="piano_badge_v2.png" alt="" loading="lazy" decoding="async"
-               style="--art-scale: .7; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <img class="project-art" data-art="4" src="foto_3x4_filter_garis_ec483c.png" alt="" loading="lazy" decoding="async"
-               style="--art-scale: .8; --art-x: 0%; --art-y: -6%; --art-fit: contain; --art-position: center;" />
-        </div></div>
-      </div>
-    </section>
-
-    <!-- ABOUT + CONTACT -->
-    <section class="about-track" id="about" aria-label="About and contact">
-      <div class="about-stage">
-        <div class="about-marquee" aria-hidden="true">
-          <div class="about-marquee-track">
-            <span>Who</span><i></i><span>am</span><i></i><span>i?</span><i>●</i>
-            <span>Who</span><i></i><span>am</span><i></i><span>i?</span><i>●</i>
-          </div>
-        </div>
-
-        <div class="sec-label sec-label-about" aria-hidden="true">About <k style="color: #ec483c;">&amp;</k> contact</div>
-
-        <div class="sideword-wrap" aria-hidden="true">
-          <span class="sideword"><k style="color: #ec483c;">A</k>bout</span>
-        </div>
-
-        <div class="about-copy-clip">
-          <div class="about-copy">
-            <p class="about-intro">Hi, I’m <k style="color: #ec483c;">Raihan Wahyu Wicaksono</k>. You can call me Rei.  I’m a student at Kalbis University, based in Jakarta. Lately, I’ve been <s class="strike strike-1">freelancing for events</s>, or more like event organizing, and just doing whatever side gigs to make a buck XD.</p>
-<p class="about-offer"><s class="strike strike-2">I offer my expertise to agencies and creative teams.</s></p>
-<p>After a year as an <k style="color: #ec483c;">Information Systems</k> student at Kalbis University, I craved to reconnect with craftsmanship, to make beautiful, carefully designed objects.</p>
-
-<p>I’m a developer with a taste for design and animation. Besides all that tech stuff, I’m actually pretty active— I Love working out and exploring new things. Always down to learn random new stuff, whether it’s academic or non-academic<k style="color: #ec483c;">.</k></p>
-<br>
-<br>
-<br>
-<br>
-<br>
-<p> Click bagian "<k style="color: #ec483c;">Le Profil</k>" untuk melihat CV.</p>
-          </div>
-        </div>
-
-        <div class="contact-content" id="contact">
-          <div class="contact-heading">Let's Talk</div>
-          <div class="contact-rule"></div>
-          <div class="contact-row">
-            <a class="contact-email scramble" href="#" data-u="Hello.rwicak" data-d="gmail.com">Email</a>
-            <div class="social-links">
-              <a class="scramble" href="https://wa.me/6285959186999?text=Halo%2C%20saya%20tertarik%20dengan%20portofolio%20kamu.%20Boleh%20tanya%20lebih%20lanjut%3F" target="_blank" rel="noopener noreferrer">Phone.</a>
+        <!-- SIDEBAR KIRI (Teks Raksasa & Foto) -->
+        <aside class="w-full md:w-[25%] flex md:flex-col justify-between items-center md:items-end border-b md:border-b-0 md:border-r border-[#333] p-8 z-10 relative">
+            
+          <!-- Tempat Foto (Rasio 3x4, Full Color, Tanpa Grayscale) -->
+            <div class="w-28 md:w-full aspect-[3/4] mb-8 md:mt-8 overflow-hidden rounded-md border-2 border-[#333]">
+                <!-- Ganti path/URL src di bawah dengan file foto Anda -->
+                <img src="saya.png" alt="Raihan Wahyu" class="w-full h-full object-cover">
             </div>
-          </div>
-        </div>
+            <!-- Teks Vertikal Raksasa -->
+            <div class="vertical-hero-text font-display tracking-tighter uppercase hidden md:block mt-auto">
+                <!-- Baris 1: Experience (Outline) -->
+                <span class="bg-outline-text text-[5.5rem] md:text-[6.5rem] leading-[0.8] block mb-2">
+                    Experience
+                </span>
+                
+                <!-- Baris 2: Exp. (Sejajar dan digeser ke bawah) -->
+                <span class="text-[6rem] md:text-[5.5rem] leading-[0.3] block -translate-y-16 md:-translate-y-32">
+                    <span class="text-accent-red">E</span><span class="text-white">xp</span>
+                </span>
+            </div>
+            
+        </aside>
 
-        <footer class="site-footer">
-          <span>Raihan Wïcaksono © <k style="color: #ec483c;">2026</k> All rights reserved.</span>
-        </footer>
-      </div>
-    </section>
-  </main>
+        <!-- KONTEN UTAMA (Kanan) -->
+        <main class="w-full md:w-[75%] p-8 md:p-12 z-10 relative">
+            
+            <!-- HEADER / PERKENALAN -->
+            <header class="mb-12">
+                <p class="text-sm font-bold tracking-widest uppercase mb-4">About <k style="color: #ec483c ;">&</k>  Resume</p>
+                <h1 class="text-3xl md:text-5xl font-bold leading-tight mb-6">
+        <span class="text-accent-red">Raihan Wahyu Wicaksono.</span> <br>
+                    Information Systems Student 
+                <p class="text-lg text-text-muted leading-relaxed max-w-2xl">
+                    
+                </p>
+            </header>
+
+            <hr class="border-[#333] mb-12">
+
+            <!-- GRID DATA & KEAHLIAN -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                <!-- Data Diri -->
+                <div>
+                    <h2 class="text-xl font-display uppercase tracking-widest mb-6 flex items-center gap-3">
+                        <span class="w-2 h-2 bg-accent-red rounded-full"></span> Personal Data
+                    </h2>
+                    <ul class="space-y-4 text-text-muted">
+                        <li><strong class="text-text-light block text-xs uppercase tracking-wider mb-1">Tanggal Lahir</strong> 07/11/2006</li>
+                        <li><strong class="text-text-light block text-xs uppercase tracking-wider mb-1">Domisili</strong>  Pd betung Pd aren Tanggerang selatan/Jakarta</li>
+                           <li><strong class="text-text-light block text-xs uppercase tracking-wider mb-1">Kewarganegaraan</strong>Indonesia</li>
+                        <li><strong class="text-text-light block text-xs uppercase tracking-wider mb-1">Email / Kontak</strong> Hello.rwicak@gmail.com <k style="color: #ec483c;">-</k> +6285959186999</li>
+                     
+                    </ul>
+                </div>
+
+                <!-- Keahlian -->
+                <div>
+                    <h2 class="text-xl font-display uppercase tracking-widest mb-6 flex items-center gap-3">
+                        <span class="w-2 h-2 bg-accent-red rounded-full"></span> Expertise
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-[#222] border border-[#333] px-3 py-1 text-sm text-text-light rounded-sm">HTML / CSS</span>
+                        <span class="bg-[#222] border border-[#333] px-3 py-1 text-sm text-text-light rounded-sm">JavaScript</span>
+                        <span class="bg-[#222] border border-[#333] px-3 py-1 text-sm text-accent-red border-accent-red/30 rounded-sm">Next.js</span>
+                        <span class="bg-[#222] border border-[#333] px-3 py-1 text-sm text-text-light rounded-sm">MySQL / Database</span>
+                 
+                    </div>
+                </div>
+            </div>
+
+            <!-- PENGALAMAN -->
+            <section class="mb-12">
+                <h2 class="text-xl font-display uppercase tracking-widest mb-8 flex items-center gap-3">
+                    <span class="w-2 h-2 bg-accent-red rounded-full"></span> Experience
+                </h2>
+
+                <div class="space-y-10">
+                    <!-- Exp 1 -->
+                    <div class="relative pl-6 border-l border-[#333]">
+                        <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 bg-accent-red rounded-full shadow-[0_0_10px_rgba(236,72,60,0.5)]"></div>
+                        <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
+                           
+                            <span class="text-accent-red text-sm font-bold tracking-wider"></span>
+                        </div>
+                        <p class="text-sm font-bold text-text-muted uppercase mb-3"></p>
+                        <p class="text-text-muted text-sm leading-relaxed max-w-2xl">
+                           - Crew Crowd control di event Music <br>
+- Crowd control sekaligus Body bag check Event EXO EXhorizon Indonesia arena<br>
+- Football Stewards Pertandingan antara Chelsea FC dan AC Milan (GBK)<br>
+
+- Ticketing di event Pameran Ice BSD
+                        </p>
+                    </div>
+
+                    <!-- Exp 2 -->
+                    <div class="relative pl-6 border-l border-[#333]">
+                        <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 bg-accent-red rounded-full shadow-[0_0_10px_rgba(236,72,60,0.5)]"></div>
+                        <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
+                            <h3 class="text-lg font-bold text-text-light">Frontend Web Developer</h3>
+                            <span class="text-accent-red text-sm font-bold tracking-wider">2026</span>
+                        </div>
+                        <p class="text-sm font-bold text-text-muted uppercase mb-3">Project </p>
+                        <p class="text-text-muted text-sm leading-relaxed max-w-2xl">
+                            Mengembangkan website katalog interaktif untuk Festival Kuliner "Warung Kandep" menggunakan HTML, CSS, JS, dan Merancang portofolio web interaktif.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2 class="text-xl font-display uppercase tracking-widest mb-8 flex items-center gap-3">
+                    <span class="w-2 h-2 bg-accent-red rounded-full"></span> SKILLS
+                </h2>
+                 <p class="text-text-muted text-sm leading-relaxed max-w-2xl">
+                            Manajemen Waktu yang Efektif<BR>
+Teamwork & Collaboration <BR>
+Pemecahan Masalah dan
+Bekerja profesional
+                <br>
+                <br>
+
+            <!-- PENDIDIKAN -->
+            <section>
+                <h2 class="text-xl font-display uppercase tracking-widest mb-8 flex items-center gap-3">
+                    <span class="w-2 h-2 bg-accent-red rounded-full"></span> Education
+                </h2>
+               
+                <div class="bg-[#1a1a1a] border border-[#333] p-6 rounded-md">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div>
+                            <h3 class="text-lg font-bold text-text-light mb-1">Mahasiswa Active Universitas Kalbis</h3>
+                            <p class="text-accent-red font-semibold text-sm">S1 Sistem Informasi (Fakultas Ilmu Komputer dan Desain)</p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <span class="border border-[#444] px-29 py-1 text-xs tracking-widest uppercase text-text-muted rounded-full">2025 - Sekarang</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
 </body>
 </html>
