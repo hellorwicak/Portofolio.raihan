@@ -71,3 +71,13 @@
   /* about: kata raksasa & marquee dibuat lebih ringan */
   .about-marquee { display: none; }
 }
+
+/* ---------- kelancaran scroll ---------- */
+body { text-rendering: auto; }                /* geometricPrecision memperlambat teks besar yang bergerak */
+.work-track { will-change: clip-path; }       /* transisi hitam -> putih (setelah INTERACTIVE / DYNAMIQUE) */
+@media (hover: none), (pointer: coarse) {
+  main { touch-action: none; }                /* scroll disetir app.js (inersia berat), bukan scroll bawaan */
+}
+@media (max-width: 700px) {
+  .about-track { height: 300vh; }             /* About lebih singkat di HP (sebelumnya 460vh) */
+}
