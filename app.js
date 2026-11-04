@@ -407,6 +407,7 @@
      ABOUT + CONTACT
      ========================================================= */
   function updateAbout(p) {
+    if (isStacked()) p = clamp(p / 0.82);   // HP: semua animasi About selesai lebih awal (garis merah / Let's Talk muncul lebih cepat)
     const vh = window.innerHeight;
     const y0 = vh * 0.72;
     const y1 = Math.max(y0 + vh * 0.4, M.L + vh * 0.05);
@@ -506,7 +507,7 @@
     const dt = previousFrameTime ? Math.min(40, timestamp - previousFrameTime) : 16.67;
     previousFrameTime = timestamp;
     // PERBAIKAN: di layar sentuh tanpa lerp (scroll bawaan browser sudah halus; lerp bikin patah-patah)
-    const factor = (reduceMotion || !smoothOn) ? 1 : 1 - Math.exp(-dt / 60);
+    const factor = (reduceMotion || !smoothOn) ? 1 : 1 - Math.exp(-dt / 45);
 
     current.opening += (target.opening - current.opening) * factor;
     current.enter += (target.enter - current.enter) * factor;
@@ -543,6 +544,7 @@
     rafPending = false;
     if (!openingTrack || !workTrack || !aboutTrack) return;
     readTargets();
+    if (!smoothOn || reduceMotion) { Object.assign(current, target); renderSceneFrame(); return; }   // HP: tanpa jeda 1 frame
     if (!sceneLoopActive) {
       sceneLoopActive = true;
       previousFrameTime = 0;
@@ -692,6 +694,59 @@
       if (!running) { running = true; last = 0; window.requestAnimationFrame(frame); }
     }, { passive: false });
     window.addEventListener('scroll', () => { if (!running) { curY = targetY = window.scrollY; } }, { passive: true });
+  })();
+
+  /* =========================================================
+     TOUCH SCROLL — inersia "berat" di HP.
+     Menggeser halaman mengikuti jari 1:1, tapi lemparan (fling) dibatasi kecepatannya
+     dan cepat melambat, jadi scroll kencang tidak langsung melompat ke paling bawah.
+     Atur rasa lewat 2 angka ini:
+       TOUCH_MAX_V : kecepatan maksimal lemparan (px/ms). Kecil = lebih berat.
+       TOUCH_TAU   : lamanya meluncur (ms). Kecil = cepat berhenti.
+     ========================================================= */
+  const TOUCH_MAX_V = 1.9;
+  const TOUCH_TAU = 300;
+  (function initTouchScroll() {
+    const main = $('main');
+    if (reduceMotion || finePointer || !main) return;
+    let pos = 0, v = 0, startY = 0, startPos = 0, lastY = 0, lastT = 0, drag = false, raf = 0, last = 0;
+    const maxY = () => Math.max(0, root.scrollHeight - window.innerHeight);
+    const blocked = () => root.classList.contains('is-loading') || root.classList.contains('is-modal');
+    const setPos = (y) => { pos = clamp(y, 0, maxY()); window.scrollTo(0, pos); };
+    const stop = () => { if (raf) window.cancelAnimationFrame(raf); raf = 0; };
+    const coast = (t) => {
+      const dt = last ? Math.min(40, t - last) : 16.7;
+      last = t;
+      setPos(pos + v * dt);
+      v *= Math.exp(-dt / TOUCH_TAU);
+      if (Math.abs(v) < 0.02 || pos <= 0 || pos >= maxY()) { raf = 0; return; }
+      raf = window.requestAnimationFrame(coast);
+    };
+    main.addEventListener('touchstart', (e) => {
+      if (blocked() || e.touches.length !== 1) { drag = false; return; }
+      stop();
+      drag = true; v = 0; pos = window.scrollY;
+      startY = lastY = e.touches[0].clientY; startPos = pos; lastT = performance.now();
+    }, { passive: true });
+    main.addEventListener('touchmove', (e) => {
+      if (!drag) return;
+      if (e.cancelable) e.preventDefault();
+      const y = e.touches[0].clientY, t = performance.now();
+      setPos(startPos + (startY - y));
+      const inst = (lastY - y) / Math.max(1, t - lastT);
+      v = v * 0.6 + inst * 0.4;
+      lastY = y; lastT = t;
+    }, { passive: false });
+    const end = () => {
+      if (!drag) return;
+      drag = false;
+      if (performance.now() - lastT > 80) v = 0;     // jari berhenti dulu sebelum dilepas = tanpa lemparan
+      v = clamp(v, -TOUCH_MAX_V, TOUCH_MAX_V);
+      last = 0;
+      if (Math.abs(v) > 0.05) raf = window.requestAnimationFrame(coast);
+    };
+    main.addEventListener('touchend', end, { passive: true });
+    main.addEventListener('touchcancel', end, { passive: true });
   })();
 
   /* =========================================================
