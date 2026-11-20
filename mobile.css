@@ -26,7 +26,15 @@
   /* 1) Penyebab area putih: stage setinggi 100svh, padahal layar membesar saat address bar menghilang.
         Pakai 100vh (tinggi terbesar) + latar track gelap supaya tidak ada celah terang. */
   .opening-track { background: var(--ink); }
-  .opening-stage, .about-stage { height: 100vh; min-height: 0; }
+  .opening-stage { height: 100vh; min-height: 0; }
+  /* About memakai 100svh = area yang benar-benar terlihat (di bawah address bar), supaya
+     "About", Let's Talk dan footer tidak tenggelam di balik toolbar browser */
+  .about-stage { height: 100svh; min-height: 0; }
+
+  /* loading screen: tinggi & pusat sama persis dengan stage opening, jadi tidak ada loncatan */
+  .loader { bottom: auto; height: 100vh; }
+  .loader-hint { bottom: calc(100vh - 100svh + 3vh); }
+  .scroll-label { bottom: calc(100vh - 100svh + 2.2vh); }
   .work-track, .about-track { margin-top: -100vh; }
   .work-track { clip-path: none; }
 
@@ -38,9 +46,9 @@
   .project-row {
     --fg: var(--ink); --bg: var(--paper);
     position: sticky; top: 0; display: flex; flex-direction: column; justify-content: center;
-    width: 100%; max-width: 100%; height: 100vh; margin: 0; padding: 12vh 6vw 6vh;
+    width: 100%; max-width: 100%; height: 100vh; margin: 0; padding: 12vh 6vw calc(6vh + 100vh - 100svh);
     background: var(--bg); color: var(--fg); translate: none; transform: none !important;
-    border-radius: 22px 22px 0 0; box-shadow: 0 -18px 40px rgba(0, 0, 0, .18);
+    border-radius: 22px 22px 0 0; box-shadow: none; border-top: 1px solid rgba(128, 128, 128, .3);
     overflow: hidden;
   }
   .project-row:nth-child(even) { --fg: var(--white); --bg: var(--ink); }
@@ -63,21 +71,29 @@
     display: block; position: relative; flex: 0 0 auto; width: 100%; height: 40vh; max-height: none;
     margin-top: 3vh; overflow: hidden; border-radius: 10px; opacity: 1;
     background: rgba(128, 128, 128, .08);
-    clip-path: inset(100% 0 0 0); transition: clip-path .9s var(--ease);
+    opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity .6s ease, transform .7s var(--ease);
   }
-  .project-row.is-open .row-art { height: 40vh; max-height: none; margin-top: 3vh; clip-path: inset(0 0 0 0); }
-  .row-art-img { transition: transform 1.4s var(--ease); }
+  .project-row.is-open .row-art { height: 40vh; max-height: none; margin-top: 3vh; opacity: 1; transform: none; }
+  .row-art-img { transition: none; }
 
   /* about: kata raksasa & marquee dibuat lebih ringan */
   .about-marquee { display: none; }
+
+  /* Let's Talk: lebih naik, lebih besar, tidak banyak ruang kosong */
+  .contact-content { top: 30%; will-change: transform; }
+  .contact-heading { font-size: clamp(28px, 7.6vw, 36px); }
+  .contact-email, .social-links { font-size: clamp(17px, 4.5vw, 23px); }
+  .contact-rule { height: 2px; margin: .35em 0 .45em; }
+  .site-footer { bottom: 2.4vh; font-size: 11px; will-change: transform; }
+  .about-copy { will-change: transform; }
 }
 
 /* ---------- kelancaran scroll ---------- */
 body { text-rendering: auto; }                /* geometricPrecision memperlambat teks besar yang bergerak */
-.work-track { will-change: clip-path; }       /* transisi hitam -> putih (setelah INTERACTIVE / DYNAMIQUE) */
+@media (min-width: 701px) { .work-track { will-change: clip-path; } }   /* PC: transisi hitam -> putih */
 @media (hover: none), (pointer: coarse) {
   main { touch-action: none; }                /* scroll disetir app.js (inersia berat), bukan scroll bawaan */
 }
 @media (max-width: 700px) {
-  .about-track { height: 300vh; }             /* About lebih singkat di HP (sebelumnya 460vh) */
+  .about-track { height: 340vh; }             /* About lebih singkat di HP (sebelumnya 460vh) */
 }
