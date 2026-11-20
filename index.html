@@ -10,9 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23202020'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-weight='900' font-size='46' fill='%23f0f0f0'%3ER%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=16" />
-  <link rel="stylesheet" href="mobile.css?v=2" />
-  <script src="app.js?v=16" defer></script>
+  <link rel="stylesheet" href="styles.css?v=17" />
+  <link rel="stylesheet" href="mobile.css?v=3" />
+  <script src="app.js?v=17" defer></script>
 </head>
 <body>
   <audio id="bg-music" loop preload="none">
@@ -79,31 +79,33 @@
 
             <a class="project-row" aria-label="Kalbis University" href="https://kalbis.ac.id/" target="_blank" rel="noopener noreferrer" data-project="0">
               <span class="project-title"><span class="title-filled">Kalbis</span><span class="title-outline">University</span></span>
-              <span class="project-meta"><strong>Bachelor of <k style="color: #ec483c;">Information Systems </k> students at </strong> Kalbis University - <b>2025/2026 - NOW</b></span>
+              <span class="project-meta"><strong>Bachelor of <k style="color: #ec483c;">Information Systems </k> students at </strong> Kalbis University  <b>2025 - NOW</b></span>
             </a>
             <a class="project-row" aria-label="Instagram" href="https://www.instagram.com/hello.rwicak/" target="_blank" rel="noopener noreferrer" data-project="1">
               <span class="project-title"><span class="title-filled">Social</span><span class="title-outline">Media</span></span>
-              <span class="project-meta"><strong> <k style="color: #ec483c;">Let's </k>moots wid me in </strong> INSTAGRAM, <b> More about me is here</b></span>
+              <span class="project-meta"><strong> Let's moots wid me in <k style="color: #ec483c;"> Instagram</k>,</strong> <b> More about me is here</b></span>
             </a>
             <a class="project-row" aria-label="La Genèse — project website" href="https://raihan51nasa.pages.dev/" target="_blank" rel="noopener noreferrer" data-project="3">
               <span class="project-title"><span class="title-filled">La </span><span class="title-outline">Genèse</span></span>
-              <span class="project-meta"><strong>Early experiments in structural <k style="color: #ec483c;"> academic</k> code. </strong> Ignore the data :) </span>
+              <span class="project-meta"><strong>Early <k style="color: #ec483c;"> experiments </k>in structural  academic code. </strong> Ignore the data :) </span>
             </a>
             <a class="project-row" aria-label="Le Profil — buka CV" href="cv.html" target="_blank" rel="noopener noreferrer" data-project="4" data-popup="cv.html">
               <span class="project-title"><span class="title-filled">Le </span><span class="title-outline">Profil</span></span>
-              <span class="project-meta"><strong><k style="color: #ec483c;">Click </k>to preview the </strong> complete <b>profile.</b></span>
+              <span class="project-meta"><strong><k style="color: #ec483c;">Click </k>"Open CV" to preview the </strong> complete <b>profile.</b></span>
             </a>
         </div>
 
         <div class="preview-col"><div class="project-preview" aria-hidden="true">
+          <!-- Setelan gambar di HP (kartu hitam): --bg-w lebar · --bg-x/--bg-y geser · --bg-scale zoom · --bg-op transparansi.
+               Setelan --art-* di bawahnya khusus untuk tampilan PC. -->
           <img class="project-art" data-art="0" src="kalbizz.png?v=3" alt="Kalbis University" loading="lazy" decoding="async"
-               style="--art-scale: .8; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <img class="project-art" data-art="1" src="instag.png?v=3" data-src-mobile="instag-putih.png?v=3" alt="" loading="lazy" decoding="async"
-               style="--art-scale: .7; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
+               style="--bg-w: 140%; --bg-x: 1%; --bg-y: 8%; --bg-scale: 0.9; --bg-op: 0.5; --art-scale: .8; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
+          <img class="project-art" data-art="1" src="instag.png?v=3" alt="" loading="lazy" decoding="async"
+               style="--bg-w: 145%; --bg-x: -2%; --bg-y: 12%; --bg-scale: 0.8; --bg-op: 0.6; --art-scale: .9; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
           <img class="project-art" data-art="3" src="piano_badge_v2.png?v=3" alt="" loading="lazy" decoding="async"
-               style="--art-scale: .7; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center;" />
-          <img class="project-art" data-art="4" src="foto_3x4_filter_garis_ec483c.png?v=3" data-src-mobile="foto_3x4_putih.png?v=3" alt="" loading="lazy" decoding="async"
-               style="--art-scale: .8; --art-x: 0%; --art-y: -6%; --art-fit: contain; --art-position: center;" />
+               style="--bg-w: 138%; --bg-x: 0%; --bg-y: 0%; --bg-scale: 1; --art-scale: .7; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center; --bg-op: 0.1;" />
+          <img class="project-art" data-art="4" src="foto_3x4_filter_garis_ec483c.png" data-src-mobile="foto_3x4_filter_garis_ec483c.png" alt="" loading="lazy" decoding="async"
+               style="--bg-w: 120%; --bg-x: 0%; --bg-y: 10%; --bg-scale: 1; --art-scale: .8; --art-x: 0%; --art-y: 0%; --art-fit: contain; --art-position: center; --bg-op: 0.07;" />
         </div></div>
       </div>
     </section>
