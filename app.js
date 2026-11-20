@@ -128,6 +128,11 @@
 
   /* slot gambar di dalam tiap baris (layout HP: gambar di bawah judul) */
   projectRows.forEach((row) => {
+    row.setAttribute('aria-expanded', 'false');
+    const go = document.createElement('span');
+    go.className = 'row-go';
+    go.textContent = row.dataset.popup ? 'Open CV' : 'Explore';
+    row.appendChild(go);
     const art = projectArts.find((a) => a.dataset.art === row.dataset.project);
     if (!art) return;
     const fig = document.createElement('span');
@@ -139,6 +144,17 @@
     fig.appendChild(im);
     row.appendChild(fig);
   });
+
+  /* HP: accordion — buka satu bar, bar lain otomatis menutup */
+  function setOpenRow(row, open) {
+    row.classList.toggle('is-open', open);
+    row.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  function toggleRow(row) {
+    const willOpen = !row.classList.contains('is-open');
+    projectRows.forEach((r) => { if (r !== row && r.classList.contains('is-open')) setOpenRow(r, false); });
+    setOpenRow(row, willOpen);
+  }
 
   const stackedMQ = window.matchMedia('(max-width: 700px)');
   const isStacked = () => stackedMQ.matches;
@@ -182,14 +198,11 @@
     row.addEventListener('mousemove', (e) => {
       if ((e.movementX || e.movementY) && !row.classList.contains('is-hover')) hoverRow(index);
     }, { passive: true });
-    // HP: kalau gambar belum terbuka, ketukan pertama membukanya; setelah itu buka link / popup
+    // HP: ketuk bar untuk buka/tutup, ketuk chip "Kunjungi" untuk membuka link / popup
     row.addEventListener('click', (e) => {
-      if (isStacked() && !row.classList.contains('is-open')) {
+      if (isStacked() && !e.target.closest('.row-go')) {   // ketuk bar = buka / tutup; ketuk chip = buka link
         e.preventDefault();
-        row.dataset.tapped = '1';
-        row.classList.add('is-open');
-        const meta = row.querySelector('.project-meta');
-        if (meta) scrambleMeta(meta);
+        toggleRow(row);
         return;
       }
       if (row.dataset.popup && !(e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1)) {
@@ -201,19 +214,6 @@
     row.addEventListener('focus', () => { cancelIdle(); setProject(index); row.classList.add('is-hover'); });
     row.addEventListener('blur', () => { row.classList.remove('is-hover'); armIdle(); });
   });
-
-  // HP: kartu yang sudah naik melewati ~55% layar otomatis membuka gambarnya
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      if (!isStacked()) return;
-      entries.forEach((en) => {
-        const row = en.target;
-        const open = en.isIntersecting || row.dataset.tapped === '1';
-        if (open !== row.classList.contains('is-open')) row.classList.toggle('is-open', open);
-      });
-    }, { rootMargin: '0px 0px -45% 0px' });
-    projectRows.forEach((r) => io.observe(r));
-  }
 
   /* =========================================================
      TEXT SCRAMBLE (email & link sosial)
@@ -327,8 +327,12 @@
   }
 
   function measure() {
-    if (!openingStage) return;
     M.vw = window.innerWidth;
+    M.L = aboutWord ? aboutWord.offsetWidth : 0;
+    M.copyH = aboutCopy ? aboutCopy.offsetHeight : 0;
+    M.copyTop = aboutCopy ? aboutCopy.offsetTop : 0;
+    M.workTop = workTrack ? workTrack.offsetTop : 0;
+    if (!openingStage || !openingTrack) return;   // mode edit: intro dikomentari -> lewati hitungan intro
     M.ou = Math.max(1, (openingTrack.offsetHeight - window.innerHeight) / window.innerHeight);
     M.vh = openingStage.clientHeight || window.innerHeight;
 
@@ -357,10 +361,6 @@
     M.VA = { w: vwordA.offsetWidth, y: M.vh * 0.33 - vfs / 2 };
     M.VB = { w: vwordB.offsetWidth, y: M.vh * 0.69 - vfs / 2 };
 
-    M.L = aboutWord ? aboutWord.offsetWidth : 0;
-    M.copyH = aboutCopy ? aboutCopy.offsetHeight : 0;
-    M.copyTop = aboutCopy ? aboutCopy.offsetTop : 0;
-    M.workTop = workTrack ? workTrack.offsetTop : 0;
   }
 
   function placeWord(el, left, ls) {
@@ -483,12 +483,12 @@
     const vh = window.innerHeight;
     const natTop = M.workTop - window.scrollY;
     const eN = (vh - natTop) / vh;
-    const tE = clamp(eN / (stacked ? 1 : WORK_EDGE_D));   // HP: kertas naik normal, tanpa easing lambat
+    const tE = clamp(eN / ((stacked || !openingTrack) ? 1 : WORK_EDGE_D));   // HP: kertas naik normal, tanpa easing lambat
     const gE = tE * tE * (3 - 2 * tE);
     const edgeY = vh * (1 - gE);
     const topClip = edgeY > 0.5 ? Math.max(0, edgeY - natTop) : 0;
     const tilt = 0.035 * vh * (1 - smooth(0.8, 1, tE));
-    workTrack.style.clipPath = stacked
+    workTrack.style.clipPath = (stacked || !openingTrack)
       ? 'none'
       : `polygon(0 ${topClip.toFixed(1)}px, 100% ${(topClip + tilt).toFixed(1)}px, 100% 100%, 0 100%)`;
 
@@ -552,7 +552,7 @@
 
   function updateScrollScenes() {
     rafPending = false;
-    if (!openingTrack || !workTrack || !aboutTrack) return;
+    if (!workTrack || !aboutTrack) return;
     readTargets();
     if (!smoothOn || reduceMotion) { Object.assign(current, target); renderSceneFrame(); return; }   // HP: tanpa jeda 1 frame
     if (!sceneLoopActive) {
@@ -794,7 +794,31 @@
     if (pr && pr.catch) pr.catch(() => {});
   }
 
+  /* ---------- MODE DEV: lewati intro supaya preview tidak mulai dari awal tiap refresh ----------
+     Cara pakai (tanpa mengubah kode): buka  index.html?skip   atau   index.html?skip#work   /   ?skip#about
+     Atau ubah DEV_SKIP_INTRO jadi true agar selalu dilewati. Kembalikan ke false sebelum upload. */
+  const DEV_SKIP_INTRO = false;
+  const SKIP_INTRO = DEV_SKIP_INTRO || new URLSearchParams(location.search).has('skip');
+
+  function skipIntro() {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'auto';   // posisi scroll bertahan saat refresh
+    if (loader) loader.remove();
+    root.classList.remove('is-loading');
+    root.classList.add('is-loaded');
+    edgeDraw = 1;
+    const vh = window.innerHeight;
+    const jump = { '#work': () => workTrack.offsetTop + vh * 1.2, '#about': () => aboutTrack.offsetTop + vh * 0.3 }[location.hash];
+    window.setTimeout(() => {
+      if (jump) window.scrollTo(0, jump());
+      readTargets();
+      Object.assign(current, target);
+      renderSceneFrame();
+      updateScrollbar();
+    }, 80);
+  }
+
   function startLoader() {
+    if (SKIP_INTRO) { skipIntro(); return; }
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
     if (!loader) { root.classList.remove('is-loading'); root.classList.add('is-loaded'); drawEdgeLine(); return; }
