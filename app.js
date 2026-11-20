@@ -38,6 +38,12 @@
   const aboutWord = $('.sideword');
   const aboutCopy = $('.about-copy');
   const aboutParas = [...document.querySelectorAll('.about-copy p')];
+  const contactEl = $('.contact-content');
+  const siteFooter = $('.site-footer');
+  const ruleEl = $('.contact-rule');
+  const strike1 = $('.strike-1');
+  const strike2 = $('.strike-2');
+  const marqTrack = $('.about-marquee-track');
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -69,7 +75,7 @@
     return nodes;
   }
   function scrambleMeta(el) {
-    if (reduceMotion) return;
+    if (reduceMotion || window.matchMedia('(max-width: 700px)').matches) return;   // HP: tanpa scramble (berat)
     if (!metaStore.has(el)) metaStore.set(el, collectText(el));
     const data = metaStore.get(el);
     const total = data.reduce((s, d) => s + d.text.length, 0);
@@ -196,6 +202,19 @@
     row.addEventListener('blur', () => { row.classList.remove('is-hover'); armIdle(); });
   });
 
+  // HP: kartu yang sudah naik melewati ~55% layar otomatis membuka gambarnya
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (!isStacked()) return;
+      entries.forEach((en) => {
+        const row = en.target;
+        const open = en.isIntersecting || row.dataset.tapped === '1';
+        if (open !== row.classList.contains('is-open')) row.classList.toggle('is-open', open);
+      });
+    }, { rootMargin: '0px 0px -45% 0px' });
+    projectRows.forEach((r) => io.observe(r));
+  }
+
   /* =========================================================
      TEXT SCRAMBLE (email & link sosial)
      ========================================================= */
@@ -235,7 +254,7 @@
   let edgeDraw = 0;
 
   const M = {
-    vw: 0, vh: 0, L: 0, copyH: 0, ou: 10, holeX: 0, holeY: 0, holeL: 0, holeR: 0, glyphL: 0, frontX: 0, lh: 3,
+    vw: 0, vh: 0, L: 0, copyH: 0, copyTop: 0, workTop: 0, ou: 10, holeX: 0, holeY: 0, holeL: 0, holeR: 0, glyphL: 0, frontX: 0, lh: 3,
     A: { fs: 0, w: 0, left0: 0, leftF: 0 },
     B: { fs: 0, w: 0, leftF: 0 },
     VA: { w: 0, y: 0 },
@@ -340,6 +359,8 @@
 
     M.L = aboutWord ? aboutWord.offsetWidth : 0;
     M.copyH = aboutCopy ? aboutCopy.offsetHeight : 0;
+    M.copyTop = aboutCopy ? aboutCopy.offsetTop : 0;
+    M.workTop = workTrack ? workTrack.offsetTop : 0;
   }
 
   function placeWord(el, left, ls) {
@@ -407,27 +428,29 @@
      ABOUT + CONTACT
      ========================================================= */
   function updateAbout(p) {
-    if (isStacked()) p = clamp(p / 0.82);   // HP: semua animasi About selesai lebih awal (garis merah / Let's Talk muncul lebih cepat)
+    const mob = isStacked();
+    if (mob) p = clamp(p / 0.72);   // HP: semua animasi About selesai di 72% pertama, sisanya dibiarkan diam
     const vh = window.innerHeight;
-    const y0 = vh * 0.72;
-    const y1 = Math.max(y0 + vh * 0.4, M.L + vh * 0.05);
-    aboutStage.style.setProperty('--about-word-y', `${lerp(y0, y1, p).toFixed(2)}px`);
+    const y0 = mob ? vh * 0.78 : vh * 0.72;
+    const y1 = mob ? vh * 0.95 : Math.max(y0 + vh * 0.4, M.L + vh * 0.05);   // HP: kata "About" tidak tenggelam
+    aboutWord.style.transform = `translate3d(0, ${lerp(y0, y1, p).toFixed(2)}px, 0) rotate(-90deg)`;
 
-    const copyTop = aboutCopy ? aboutCopy.offsetTop : vh * 0.56;
-    const copyTravel = ((copyTop + M.copyH + vh * 0.06) / vh) * 100;
-    aboutStage.style.setProperty('--about-copy-y', `${(-clamp(p / 0.78) * copyTravel).toFixed(3)}vh`);
+    const copyTravel = ((M.copyTop + M.copyH + vh * 0.06) / vh) * 100;
+    aboutCopy.style.transform = `translate3d(0, ${(-clamp(p / 0.78) * copyTravel).toFixed(3)}vh, 0)`;
 
     const settle = smooth(0, 0.5, p);
-    aboutParas.forEach((el, i) => el.style.setProperty('--ps', `${(i * 5 * (1 - settle)).toFixed(2)}vh`));
+    aboutParas.forEach((el, i) => { el.style.translate = `0 ${(i * 5 * (1 - settle)).toFixed(2)}vh`; });
 
-    aboutStage.style.setProperty('--strike-1', smooth(0.03, 0.12, p).toFixed(4));
-    aboutStage.style.setProperty('--strike-2', smooth(0.12, 0.22, p).toFixed(4));
+    if (strike1) strike1.style.backgroundSize = `${(smooth(0.03, 0.12, p) * 100).toFixed(2)}% 2px`;
+    if (strike2) strike2.style.backgroundSize = `${(smooth(0.12, 0.22, p) * 100).toFixed(2)}% 2px`;
 
-    const cp = smooth(0.46, 0.78, p);
-    aboutStage.style.setProperty('--contact-y', `${((1 - cp) * 110).toFixed(3)}vh`);
-    aboutStage.style.setProperty('--rule', smooth(0.72, 1.0, p).toFixed(4));
+    const cp = mob ? smooth(0.36, 0.64, p) : smooth(0.46, 0.78, p);
+    const cy = `translate3d(0, ${((1 - cp) * 110).toFixed(3)}vh, 0)`;
+    if (contactEl) contactEl.style.transform = cy;
+    if (siteFooter) siteFooter.style.transform = cy;
+    if (ruleEl) ruleEl.style.transform = `scaleX(${(mob ? smooth(0.6, 0.8, p) : smooth(0.72, 1.0, p)).toFixed(4)})`;
 
-    aboutStage.style.setProperty('--marq', (p * 70).toFixed(3));
+    if (marqTrack) marqTrack.style.transform = `translate3d(${(-p * 70).toFixed(3)}vw, 0, 0)`;
   }
 
   /* =========================================================
@@ -458,7 +481,7 @@
 
     const stacked = isStacked();
     const vh = window.innerHeight;
-    const natTop = workTrack.offsetTop - window.scrollY;
+    const natTop = M.workTop - window.scrollY;
     const eN = (vh - natTop) / vh;
     const tE = clamp(eN / (stacked ? 1 : WORK_EDGE_D));   // HP: kertas naik normal, tanpa easing lambat
     const gE = tE * tE * (3 - 2 * tE);
@@ -486,19 +509,6 @@
     }
 
     updateAbout(current.about);
-
-    // HP: kartu yang sudah naik melewati garis pemicu otomatis membuka gambarnya
-    if (stacked && current.enter > 0.5) {
-      const trigger = vh * 0.55;
-      projectRows.forEach((row) => {
-        const open = row.getBoundingClientRect().top <= trigger || row.dataset.tapped === '1';
-        if (open !== row.classList.contains('is-open')) {
-          row.classList.toggle('is-open', open);
-          const meta = row.querySelector('.project-meta');
-          if (open && meta) scrambleMeta(meta);
-        }
-      });
-    }
   }
 
   function animateSceneProgress(timestamp) {
