@@ -1,0 +1,188 @@
+/* mobile.css — taruh SETELAH styles.css. Perbaikan HP + tombol download CV */
+
+/* tombol download PDF di popup CV (semua ukuran layar) */
+.cv-dl {
+  margin-left: auto; margin-right: 18px; color: var(--white); text-decoration: none;
+  font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  border: 1px solid var(--accent); padding: 7px 12px; border-radius: 99px; transition: background .2s ease;
+}
+.cv-dl:hover, .cv-dl:active { background: var(--accent); }
+
+/* tombol download di dalam paragraf About (ukuran tetap, HP dan PC) */
+.about-copy .cv-dl {
+  display: inline-block; margin: 0 .25em; padding: .5em 1.1em; vertical-align: middle;
+  font-size: clamp(11px, 1vw, 14px); line-height: 1; white-space: nowrap; letter-spacing: .12em;
+}
+
+.row-go { display: none; }                      /* chip "Kunjungi" hanya dipakai di HP */
+
+/* ---------- kelancaran ---------- */
+body { text-rendering: auto; }
+@media (min-width: 701px) { .work-track { will-change: clip-path; } }
+@media (hover: none), (pointer: coarse) {
+  .scrollbar { display: none !important; }
+  .cv-backdrop { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, .94); }
+  html, body { overscroll-behavior-y: none; }
+  main { touch-action: none; }                  /* scroll disetir app.js (inersia berat) */
+}
+
+/* =====================================================================
+   HP (≤700px)
+   ===================================================================== */
+@media (max-width: 700px) {
+  /* opening + loader: tinggi sama persis, tidak ada loncatan / area putih */
+  .opening-track { background: var(--ink); }
+  .opening-stage { height: 100vh; min-height: 0; }
+  .about-stage { height: 100svh; min-height: 0; }
+  .loader { bottom: auto; height: 100vh; }
+  .loader-hint { bottom: calc(100vh - 100svh + 3vh); }
+  .scroll-label { bottom: calc(100vh - 100svh + 2.2vh); }
+  .work-track, .about-track { margin-top: -100vh; }
+  /* tepi atas Work miring seperti di PC (statis, tidak dianimasikan) */
+  .work-track { clip-path: polygon(0 0, 100% 3.5vh, 100% 100%, 0 100%); height: calc(100vh + 100svh - var(--peek)); }
+  :root { --peek: 6.5vh; }   /* tinggi tepi gelap "About & Contact" yang mengintip di bawah layar Selected work */
+  .about-track { height: 340vh; }
+
+  /* ---------------- WORK: daftar bar buka-tutup (accordion) ---------------- */
+  .work-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .work-bar { position: absolute; top: 0; left: 0; right: 0; height: 7vh; margin: 0; background: var(--paper); }
+  .project-list {
+    position: absolute; inset: 0; width: 100%; counter-reset: row;
+    padding: 11vh 4.5vw calc(4vh + 100vh - 100svh);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  /* bar tertutup */
+  .project-list .project-row {
+    --fg: var(--ink); --closed-fs: clamp(26px, 8.6vw, 38px); --k: 2.33;   /* --k = seberapa besar judul saat terbuka dibanding saat tertutup */
+    position: relative; display: block; flex: 0 0 auto; width: 100%; max-width: 100%;
+    height: 64px; margin: 0; padding: 0; overflow: visible; contain: layout style;
+    border-radius: 24px; background: transparent; color: var(--fg);
+    translate: none; transform: none !important; -webkit-tap-highlight-color: transparent;
+    transition: height .75s var(--ease), margin .75s var(--ease), background-color .5s ease;
+  }
+  .project-list .project-row[data-project="0"] { --k: 1.75; }
+  .project-list .project-row::after {      /* garis pemisah */
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: rgba(32, 32, 32, .28); transition: opacity .4s ease;
+  }
+  .project-list .project-row.is-open::after { opacity: 0; }
+
+  /* bar terbuka: kartu hitam */
+  .project-list .project-row.is-open {
+    --fg: #f5f5f3;
+    height: clamp(300px, calc(100svh - 27vh - 212px), 560px);   /* sisakan ruang di atas intipan About */
+    margin: 10px 0; background: #0b0b0b;
+  }
+
+  /* nomor */
+  .project-list .project-row::before {
+    display: block; position: absolute; left: 2px; top: 27px; font-size: 11px; color: var(--accent);
+    transform: none !important; transition: left .75s var(--ease), top .75s var(--ease), color .5s ease;
+  }
+  .project-list .project-row.is-open::before { left: 22px; top: 22px; color: #cfcfcf; }
+
+  /* judul: dari baris kecil di atas -> besar di bawah kartu */
+  .project-list .project-row .project-title {
+    position: absolute; left: 50px; right: 16px; top: 14px;
+    display: flex; flex-wrap: nowrap; align-items: baseline; gap: .085em;
+    font-size: calc(var(--closed-fs) * var(--k)); line-height: .92; letter-spacing: var(--title-ls); white-space: nowrap;
+    transform: translateY(0) scale(calc(1 / var(--k))) scaleX(1.06); transform-origin: left top; color: var(--fg);
+    transition: top .75s var(--ease), left .75s var(--ease), transform .75s var(--ease);
+  }
+  .project-list .project-row.is-open .project-title {
+    top: calc(100% - 84px); left: 22px; right: 22px; flex-wrap: wrap; white-space: normal;
+    transform: translateY(-100%) scale(1) scaleX(1.06);
+  }
+  .project-list .project-row .title-filled { color: var(--fg); transition: color .5s ease; }
+  .project-list .project-row .title-outline,
+  .project-list .project-row:hover .title-outline,
+  .project-list .project-row:focus-visible .title-outline {
+    color: transparent; -webkit-text-stroke: calc(1.1px * var(--k)) var(--fg);
+    letter-spacing: -.04em;   /* JARAK HURUF OUTLINE: makin kecil (mis. -.06em) = makin rapat, makin besar (mis. -.02em) = makin renggang */
+  }
+  .project-list .project-row { outline: none; }
+  .project-list .project-row.is-open .title-outline { -webkit-text-stroke-width: 1.1px; }
+  .project-list .project-row.is-open .title-filled .ch:first-child { color: var(--accent); }
+  .project-list .project-row.is-open .project-title .ch {
+    animation: chIn .8s var(--ease) both; animation-delay: calc(var(--i) * 28ms + 220ms);
+  }
+  @keyframes chIn { from { transform: translateY(.45em); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* keterangan */
+  .project-list .project-row .project-meta {
+    position: absolute; left: 22px; right: 120px; bottom: 22px; max-width: none; max-height: none; margin: 0;
+    overflow: visible; white-space: normal; font-size: 12px; line-height: 1.4; color: #a6a6a6;
+    opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .6s var(--ease);
+  }
+  .project-list .project-row.is-open .project-meta { opacity: 1; transform: none; max-height: none; margin: 0; transition-delay: .3s; }
+  .project-list .project-row .project-meta strong, .project-list .project-row .project-meta b { color: #a6a6a6; }
+
+  /* gambar latar (logo besar, terpotong di dalam kartu) */
+  .project-list .project-row .row-art {
+    display: block; position: absolute; inset: 0; width: auto; height: auto; max-height: none; margin: 0;
+    overflow: hidden; border-radius: inherit; opacity: 0; transform: none; pointer-events: none; transition: opacity .6s ease;
+  }
+  .project-list .project-row.is-open .row-art { opacity: 1; height: auto; max-height: none; margin: 0; transition-delay: .15s; }
+  .project-list .project-row .row-art-img {
+    /* PENGATURAN GAMBAR LATAR: ubah lewat style="" tiap <img class="project-art"> di index.html
+       --bg-w (lebar, % kartu) · --bg-x / --bg-y (geser) · --bg-scale (zoom) · --bg-op (transparansi) */
+    position: absolute; inset: auto;
+    left: calc(50% + var(--bg-x, 0%)); top: calc(38% + var(--bg-y, 0%));
+    width: var(--bg-w, 138%); max-width: none; height: auto;
+    object-fit: contain; opacity: var(--bg-op, 1); animation: none;
+    transform: translate(-50%, -50%) scale(calc(var(--bg-scale, 1) * 1.3)); transition: transform 1.2s var(--ease);
+  }
+  .project-list .project-row.is-open .row-art-img { transform: translate(-50%, -50%) scale(var(--bg-scale, 1)); }
+  .project-list .project-row .project-title, .project-list .project-row .project-meta,
+  .project-list .project-row::before, .row-go { z-index: 1; }
+  .project-list .project-row .row-art { z-index: 0; }
+
+  /* chip link */
+  .row-go {
+    display: inline-flex; position: absolute; right: 20px; bottom: 20px; padding: 9px 14px;
+    border: 1px solid rgba(245, 245, 243, .5); border-radius: 99px; color: #f5f5f3;
+    font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+    opacity: 0; transform: translateY(10px); pointer-events: none;
+    transition: opacity .4s ease, transform .6s var(--ease), background .2s ease, border-color .2s ease;
+  }
+  .project-list .project-row.is-open .row-go { opacity: 1; transform: none; pointer-events: auto; transition-delay: .35s; }
+  .row-go:active { background: var(--accent); border-color: var(--accent); }
+
+  /* ---------------- ABOUT ---------------- */
+  /* "Who am i?" di latar: tampil di HP, tanpa titik merah */
+  .about-marquee { top: 9vh; }
+  .about-marquee-track { font-size: clamp(70px, 22vw, 110px); }
+  .about-marquee-track i { display: none; }
+  .about-marquee-track span { padding-right: .5em; }
+
+  /* Let's Talk: lebih naik & lebih besar */
+  .contact-content { top: 34%; will-change: transform; }
+  .contact-heading { font-size: clamp(34px, 9.4vw, 44px); }
+  .contact-email, .social-links { font-size: clamp(18px, 4.8vw, 25px); }
+  .contact-row { flex-direction: column; align-items: flex-start; gap: .5em; }
+  .contact-rule { height: 2px; margin: .4em 0 .7em; }
+  .site-footer { bottom: 2.4vh; font-size: 11px; will-change: transform; }
+  .about-copy { will-change: transform; }
+}
+
+/* ---------- MODE EDIT ----------
+   Kalau <section class="opening-track"> di index.html dikomentari, Work otomatis jadi bagian pertama halaman */
+main > .work-track:first-child { margin-top: 0; clip-path: none !important; }
+
+/* =====================================================================
+   PC (≥701px): Selected work terpaku, empat baris rapat & terlihat semua
+   ===================================================================== */
+@media (min-width: 701px) {
+  .work-track { height: 270vh; }
+  .work-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .work-bar { position: absolute; top: 0; left: 0; right: 0; height: 10vh; margin: 0; background: none; }
+  .project-list { position: absolute; top: 0; left: 0; bottom: 0; padding: 19vh 0 0; }
+  .project-row { margin-bottom: 8.5vh; }
+  .preview-col { position: absolute; top: 14vh; bottom: auto; height: 74vh; }
+  .project-preview { position: absolute; inset: 0; height: 100%; }
+}
+/* huruf outline di mana-mana: menempel tapi tidak saling menimpa */
+.title-outline { letter-spacing: -.04em; }
+/* gambar PC yang tidak aktif tidak perlu terus bergerak (hemat tenaga) */
+.project-art:not(.is-visible) { animation-play-state: paused; }
